@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Zip Files
-        working-dictionary: ./
+        working-directory: ./
         run: zip -r ./module.zip ./* -x '*.git*' -x '.idea/'
 
       - name: Get Version
