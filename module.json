@@ -1,12 +1,22 @@
 {
-  "name": "",
-  "title": "",
-  "description": "",
+  "name": "difficultterrain",
+  "title": "Difficult Terrain",
+  "description": "Add a difficult Terrain multiplier to your ruler!",
   "author": "Nordiii",
   "version": "1.0.0",
-  "scripts": [
+  "minimumCoreVersion": "0.6.6",
+  "compatibleCoreVersion": "0.6.6",
+  "language": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
   ],
-  "url": "",
-  "manifest": "",
-  "download": ""
+  "esmodules": [
+    "scripts/difficult-terrain.js"
+  ],
+  "url": "https://github.com/Nordiii/difficultterrain.git",
+  "manifest": "https://github.com/Nordiii/difficultterrain/releases/latest/download/module.json",
+  "download": "https://github.com/Nordiii/difficultterrain/releases/download/1.0.0/module.json"
 }

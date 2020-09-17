@@ -1,2 +1,8 @@
 {
+  "difficultterrain.maxTerrainMultiplier.n": "Maximal Terrain multiplier",
+  "difficultterrain.maxTerrainMultiplier.h": "Maximal amount which can get multiplied into the movement distance (only works with the fake rule this module creates)",
+  "difficultterrain.terrainMultiplierSteps.n": "Amount to increment/decrease",
+  "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
+  "difficultterrain.incrementSpeed.n": "Time between registered x/y push (client)",
+  "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between x/y applying increment/decrease difficult terrain value"
 }
