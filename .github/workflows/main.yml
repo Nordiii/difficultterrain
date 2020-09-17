@@ -13,7 +13,7 @@ jobs:
 
       - name: Zip Files
         working-directory: ./
-        run: zip -r ./module.zip ./* -x '*.git*' -x '.idea/' -x 'media/'
+        run: zip -r ./module.zip ./* -x '*.git*' -x '*.idea/' -x './media/'
 
       - name: Get Version
         shell: bash

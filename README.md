@@ -4,7 +4,7 @@ Customizable hotkeys to increase/decrease the multiplier.
 This module is somewhat compatible with Show-Drag-Distance, there are a few bugs, but I am not sure if those are on my end.
 
 ## Settings
-![Settings](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/settings.PNG)
+![Settings](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/settings.JPG)
 ## Normal ruler showcase
 ![Normal ruler showcase](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/difficultterrain.gif)
 ## Show-Drag-Distance showcase
