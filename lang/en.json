@@ -3,6 +3,12 @@
   "difficultterrain.maxTerrainMultiplier.h": "Maximal amount which can get multiplied into the movement distance (only works with the fake rule this module creates)",
   "difficultterrain.terrainMultiplierSteps.n": "Amount to increment/decrease",
   "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
-  "difficultterrain.incrementSpeed.n": "Time between registered x/y push (client)",
-  "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between x/y applying increment/decrease difficult terrain value"
+  "difficultterrain.incrementSpeed.n": "Time between registered hotkey push (client)",
+  "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between applying increment/decrease difficult terrain value",
+  "difficultterrain.incrementHotkey.n": "Hotkey to increment terrain difficulty (client)",
+  "difficultterrain.incrementHotkey.h": "You can enter any key here, no combined keys possible",
+  "difficultterrain.decreaseHotkey.n": "Hotkey to decrease terrain difficulty (client)",
+  "difficultterrain.decreaseHotkey.h": "You can enter any key here, no combined keys possible",
+  "difficultterrain.extendedRuler.n": "Module class extending the default ruler class (experimental)",
+  "difficultterrain.extendedRuler.h": "In case a module extends the ruler class (see Show Drag Distance) you can add the class name here separated by a ',' this may adds difficult terrain compatibility"
 }

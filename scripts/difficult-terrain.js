@@ -32,7 +32,7 @@ Hooks.once('init', () => {
         hint: "difficultterrain.incrementHotkey.h",
         scope: "client",
         config: true,
-        default: "x",
+        default: "+",
         type: String
     });
     game.settings.register('difficultterrain', "decreaseHotkey", {
@@ -40,7 +40,15 @@ Hooks.once('init', () => {
         hint: "difficultterrain.decreaseHotkey.h",
         scope: "client",
         config: true,
-        default: "y",
+        default: "-",
+        type: String
+    });
+    game.settings.register('difficultterrain', "extendedRuler", {
+        name: "difficultterrain.extendedRuler.n",
+        hint: "difficultterrain.extendedRuler.h",
+        scope: "world",
+        config: true,
+        default: "DragRuler",
         type: String
     });
 });

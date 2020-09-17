@@ -1,10 +1,11 @@
 class gameSettingsData {
-    constructor(max, increment, interval, incrementHotkey, decreaseHotkey) {
+    constructor(max, increment, interval, incrementHotkey, decreaseHotkey, extendedRuler) {
         this.max = max;
         this.incremt = increment;
         this.interval = interval;
         this.incrementHotkey = incrementHotkey;
         this.decreaseHotkey = decreaseHotkey;
+        this.extendedRuler = extendedRuler;
     }
 }
 
@@ -24,9 +25,15 @@ export function patch_ruler() {
     let gameSettings = updateSettings();
     let lastRegisteredKeyPress = Date.now();
     const rulerArray = [canvas.controls.ruler]
-    if (canvas.controls.dragRuler !== undefined)
-        rulerArray.push(canvas.controls.dragRuler)
+    gameSettings.extendedRuler.split(",").forEach(value => {
+        let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
+        if (!(canvas.controls[value] == null))
+            rulerArray.push(canvas.controls[value])
+        else if (!(canvas.controls[lowerCaseStart] == null))
+            rulerArray.push(canvas.controls[lowerCaseStart])
+    });
 
+    const dragRulerFound = rulerArray.some(value => value.constructor.name === "DragRuler")
     Hooks.on("closeSettingsConfig", () => gameSettings = updateSettings());
 
     const handleLeftClick = () => {
@@ -42,13 +49,13 @@ export function patch_ruler() {
             return;
         if (rulerArray.some(value => value.constructor.name === "DragRuler"))
             if (rulerArray.some(value => value.waypoints.length > difficultWaypoints.length + 1)) {
-
                 difficultWaypoints.push(currentDifficultyMultiplier);
                 return;
             }
 
         difficultWaypoints.pop();
     }
+    //Using this because pixi right click wont register when dragging a token
     $('body').on('contextmenu', (e) => {
         if (e.target.id === "board")
             handleRightClick();
@@ -56,9 +63,16 @@ export function patch_ruler() {
 
     const oldKeyEvent = KeyboardManager.prototype.getKey;
     KeyboardManager.prototype.getKey = function (e) {
+        let result = oldKeyEvent.apply(this, arguments);
+        if (dragRulerFound && e.key === "x") {
+            if (difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
+                difficultWaypoints.pop();
+        }
+
         if (Date.now() - lastRegisteredKeyPress < gameSettings.interval)
-            return oldKeyEvent.apply(this, arguments);
+            return result;
         lastRegisteredKeyPress = Date.now();
+
 
         if (e.key === gameSettings.incrementHotkey) {
             setTerrainMultiplier(gameSettings.incremt)
@@ -69,7 +83,7 @@ export function patch_ruler() {
             updateRuler(e);
         }
 
-        return oldKeyEvent.apply(this, arguments);
+        return result
     };
 
     function setTerrainMultiplier(amount) {
@@ -85,7 +99,6 @@ export function patch_ruler() {
     game.user.broadcastActivity = function (activityData) {
         if (activityData.ruler == null && activityData.dragruler == null)
             return oldBroadcast.apply(this, arguments);
-
 
         if (activityData.ruler != null)
             activityData.ruler = Object.assign({
@@ -108,6 +121,12 @@ export function patch_ruler() {
         value.apply(this, arguments)
     });
 
+    const oldRulerClear = rulerArray.map(value => value.clear);
+    oldRulerClear.forEach((value, index) => rulerArray[index].clear = function () {
+        difficultWaypoints = [];
+        value.apply(this, arguments);
+    });
+
     /// Distance calculation
     const oldHexDist = HexagonalGrid.prototype.measureDistances;
     HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
@@ -123,7 +142,7 @@ export function patch_ruler() {
             currentWaypoints = difficultWaypoints;
             currentMultiplier = currentDifficultyMultiplier
         }
-        if (currentWaypoints === undefined || currentWaypoints === null)
+        if (currentWaypoints == null || isNaN(currentMultiplier))
             return oldHexDist.apply(this, arguments);
 
         return segments.map((s, i) => {
@@ -240,5 +259,6 @@ function updateSettings() {
         game.settings.get("difficultterrain", "incrementSpeed"),
         game.settings.get("difficultterrain", "incrementHotkey"),
         game.settings.get("difficultterrain", "decreaseHotkey"),
+        game.settings.get("difficultterrain", "extendedRuler"),
     );
 }
