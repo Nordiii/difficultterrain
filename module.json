@@ -1,7 +1,7 @@
 {
   "name": "difficultterrain",
   "title": "Difficult Terrain",
-  "description": "Add a difficult Terrain multiplier to your ruler!",
+  "description": "Add a difficult terrain multiplier to your ruler!",
   "author": "Nordiii",
   "version": "1.0.0",
   "minimumCoreVersion": "0.6.6",
