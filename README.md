@@ -13,6 +13,8 @@ Future releases of Show-Drag-Distance may breaks this compatibility, just remove
 ![Show-Drag-Distance showcase](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/difficultterrainshowdragdistance.gif)
 
 ## Changelog
+#### 1.0.1
+* refactoring
 
 #### 1.0.0
 * initial release

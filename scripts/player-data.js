@@ -1,0 +1,171 @@
+export class PlayerData {
+
+    otherPlayerWaypoints = new Map();
+    currentDifficultyMultiplier = 1;
+    gameSettings;
+    lastRegisteredKeyPress = Date.now();
+    dragRulerFound = false;
+    difficultWaypoints = [];
+    rulerArray = [canvas.controls.ruler]
+
+    constructor(ModuleSettings) {
+        this.gameSettings = ModuleSettings;
+        this.gameSettings.extendedRuler.split(",").forEach(value => {
+            let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
+            if (!(canvas.controls[value] == null))
+                this.rulerArray.push(canvas.controls[value])
+            else if (!(canvas.controls[lowerCaseStart] == null))
+                this.rulerArray.push(canvas.controls[lowerCaseStart])
+        });
+
+        this.dragRulerFound = this.rulerArray.some(value => value.constructor.name === "DragRuler")
+    }
+
+    registerKeyEvent() {
+        const oldKeyEvent = KeyboardManager.prototype.getKey;
+        const self = this;
+
+        KeyboardManager.prototype.getKey = function (e) {
+            let result = oldKeyEvent.apply(this, arguments);
+
+            if (self.dragRulerFound && e.key === "x") {
+                if (self.difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
+                    self.difficultWaypoints.pop();
+            }
+            if (Date.now() - self.lastRegisteredKeyPress < self.gameSettings.interval)
+                return result;
+            self.lastRegisteredKeyPress = Date.now();
+
+
+            if (e.key === self.gameSettings.incrementHotkey) {
+                self.setTerrainMultiplier(self.gameSettings.increment)
+                self.updateRuler(e);
+            }
+
+            if (e.key === self.gameSettings.decreaseHotkey) {
+                self.setTerrainMultiplier(-self.gameSettings.increment)
+                self.updateRuler(e);
+            }
+
+            return result
+        };
+        return this;
+    }
+
+    registerBroadcast() {
+        const oldBroadcast = game.user.broadcastActivity;
+        const self = this;
+        game.user.broadcastActivity = function (activityData) {
+            if (activityData.ruler == null && activityData.dragruler == null)
+                return oldBroadcast.apply(this, arguments);
+
+            if (activityData.ruler != null)
+                activityData.ruler = Object.assign({
+                    difficultWaypoints: self.difficultWaypoints,
+                    currentDifficultyMultiplier: self.currentDifficultyMultiplier
+                }, activityData.ruler);
+            else
+                activityData.dragruler = Object.assign({
+                    difficultWaypoints: self.difficultWaypoints,
+                    currentDifficultyMultiplier: self.currentDifficultyMultiplier
+                }, activityData.dragruler);
+            oldBroadcast.apply(this, arguments);
+        };
+        return this;
+    }
+
+    registerReceiveBroadcast() {
+        const oldRulerUpdate = this.rulerArray.map(value => canvas.controls["update" + value.constructor.name]);
+        const self = this;
+        oldRulerUpdate.forEach((value, index) => canvas.controls["update" + self.rulerArray[index].constructor.name] = function (user, ruler) {
+            if (ruler == null)
+                return value.apply(this, arguments);
+            self.otherPlayerWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints, ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
+            value.apply(this, arguments)
+        });
+        return this;
+    }
+
+    registerMouseEvents() {
+        const handleLeftClick = () => {
+            if (this.rulerArray.every(value => value.waypoints.length === 0))
+                return;
+
+            if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1))
+                this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+        }
+        canvas.app.stage.addListener('click', handleLeftClick);
+        const handleRightClick = () => {
+            if (this.rulerArray.every(value => value.waypoints.length === 0))
+                return;
+            if (this.rulerArray.some(value => value.constructor.name === "DragRuler"))
+                if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1)) {
+                    this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                    return;
+                }
+            this.difficultWaypoints.pop();
+        }
+        //Using this because pixi right click wont register when dragging a token
+        $('body').on('contextmenu', (e) => {
+            if (e.target.id === "board")
+                handleRightClick();
+        });
+        return this;
+    }
+
+    registerRulerClear() {
+        const oldRulerClear = this.rulerArray.map(value => value.clear);
+        const self = this;
+        oldRulerClear.forEach((value, index) => this.rulerArray[index].clear = function () {
+            self.difficultWaypoints = [];
+            value.apply(this, arguments);
+        });
+        return this;
+    }
+
+    setTerrainMultiplier(amount) {
+        if (this.currentDifficultyMultiplier === this.gameSettings.max && amount > 0)
+            this.currentDifficultyMultiplier = 1
+        else if (this.currentDifficultyMultiplier === 1 && amount < 0)
+            this.currentDifficultyMultiplier = this.gameSettings.max
+        else
+            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.gameSettings.max);
+    }
+
+
+    updateRuler(e) {
+        if (this.rulerArray.every(value => value.waypoints.length === 0))
+            return;
+        let currentRuler = this.rulerArray.find(value => value.waypoints.length > 0)
+        let newEvent = {};
+        newEvent.data = {
+            origin: currentRuler.waypoints[currentRuler.waypoints.length - 1],
+            destination: currentRuler.destination,
+            originalEvent: e
+        };
+
+        let ruler = {
+            class: currentRuler.constructor.name,
+            name: currentRuler.constructor.name + "." + game.user.id,
+            waypoints: currentRuler.waypoints,
+            destination: currentRuler.destination,
+            speed: currentRuler.tokenSpeed,
+            _state: 2
+        };
+        let activityData = {
+            [ruler.class.toLowerCase()]: ruler
+        };
+        if (game.user.hasPermission("SHOW_RULER"))
+            game.user.broadcastActivity(activityData);
+        currentRuler._onMouseMove(newEvent);
+    }
+}
+
+class detailedWaypointData {
+    constructor(wayPoints, endPoint, difficultyMultiplierWayPoints, difficultMultiplierNow) {
+        this.wayPoints = wayPoints;
+        this.endPoint = endPoint;
+        this.difficultyMultiplierWayPoints = difficultyMultiplierWayPoints;
+        this.difficultMultiplierNow = difficultMultiplierNow;
+    }
+}
