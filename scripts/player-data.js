@@ -56,19 +56,17 @@ export class PlayerData {
         const oldBroadcast = game.user.broadcastActivity;
         const self = this;
         game.user.broadcastActivity = function (activityData) {
-            if (activityData.ruler == null && activityData.dragruler == null)
-                return oldBroadcast.apply(this, arguments);
+            let rulerBroadcasting = Object.keys(activityData).reduce((acc, propertyName) => {
+                if (self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0))
+                    acc.push(propertyName)
+                return acc;
+            }, []);
 
-            if (activityData.ruler != null)
-                activityData.ruler = Object.assign({
-                    difficultWaypoints: self.difficultWaypoints,
-                    currentDifficultyMultiplier: self.currentDifficultyMultiplier
-                }, activityData.ruler);
-            else
-                activityData.dragruler = Object.assign({
-                    difficultWaypoints: self.difficultWaypoints,
-                    currentDifficultyMultiplier: self.currentDifficultyMultiplier
-                }, activityData.dragruler);
+            rulerBroadcasting.forEach((value) => activityData[value] = Object.assign({
+                difficultWaypoints: self.difficultWaypoints,
+                currentDifficultyMultiplier: self.currentDifficultyMultiplier
+            }, activityData[value]));
+
             oldBroadcast.apply(this, arguments);
         };
         return this;
