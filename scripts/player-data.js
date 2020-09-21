@@ -135,7 +135,7 @@ export class PlayerData {
                 return wrapped(e);
 
             if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
-                return
+                return;
 
             self.lastRegisteredMouseWheel = Date.now();
             if (e.deltaY < 0) {
@@ -145,7 +145,7 @@ export class PlayerData {
                 self.setTerrainMultiplier(-self.gameSettings.increment)
                 self.updateRuler(e);
             }
-        }, 'MIXED')
+        }, 'MIXED');
 
         return this;
     }
