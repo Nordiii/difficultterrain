@@ -21,6 +21,7 @@ export class ModuleSettings {
         Hooks.on("closeSettingsConfig", () => getCurrentSettings());
     }
 
+
     static registerSettings() {
         game.settings.register('difficultterrain', "maxTerrainMultiplier", {
             name: "difficultterrain.maxTerrainMultiplier.n",

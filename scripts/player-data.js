@@ -1,5 +1,8 @@
-export class PlayerData {
+import {libWrapper} from "../shim.js";
 
+const MODULE_ID = "difficultterrain";
+
+export class PlayerData {
     otherPlayerWaypoints = new Map();
     currentDifficultyMultiplier = 1;
     gameSettings;
@@ -30,32 +33,31 @@ export class PlayerData {
     }
 
     registerKeyEvent() {
-        const oldKeyEvent = KeyboardManager.prototype.getKey;
         const self = this;
 
-        KeyboardManager.prototype.getKey = function (e) {
-            let result = oldKeyEvent.apply(this, arguments);
-            if (self.dragRulerFound && e.key === "x") {
-                if (self.difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
-                    self.difficultWaypoints.pop();
-            }
-            if (Date.now() - self.lastRegisteredKeyPress < self.gameSettings.interval)
-                return result;
-            self.lastRegisteredKeyPress = Date.now();
+        libWrapper.register(MODULE_ID, "KeyboardManager.prototype.getKey",
+            function (wrapped, e) {
+                if (self.dragRulerFound && e.key === "x") {
+                    if (self.difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
+                        self.difficultWaypoints.pop();
+                }
+                if (Date.now() - self.lastRegisteredKeyPress < self.gameSettings.interval)
+                    return wrapped(e);
+                self.lastRegisteredKeyPress = Date.now();
 
 
-            if (e.key === self.gameSettings.incrementHotkey) {
-                self.setTerrainMultiplier(self.gameSettings.increment)
-                self.updateRuler(e);
-            }
+                if (e.key === self.gameSettings.incrementHotkey) {
+                    self.setTerrainMultiplier(self.gameSettings.increment)
+                    self.updateRuler(e);
+                }
 
-            if (e.key === self.gameSettings.decreaseHotkey) {
-                self.setTerrainMultiplier(-self.gameSettings.increment)
-                self.updateRuler(e);
-            }
+                if (e.key === self.gameSettings.decreaseHotkey) {
+                    self.setTerrainMultiplier(-self.gameSettings.increment)
+                    self.updateRuler(e);
+                }
 
-            return result
-        };
+                return wrapped(e);
+            }, "WRAPPER");
         return this;
     }
 
@@ -128,27 +130,22 @@ export class PlayerData {
 
     registerMouseWheel() {
         let self = this;
-        const _onMouseWheel = function (oldClassReference) {
-            return function (e) {
-                if (!self.rulerArray.some(value => value.waypoints.length > 0))
-                    return oldClassReference.apply(this, arguments);
+        libWrapper.register(MODULE_ID, 'canvas.activeLayer._onMouseWheel', function (wrapped, e) {
+            if (!self.rulerArray.some(value => value.waypoints.length > 0))
+                return wrapped(e);
 
-                if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
-                    return;
-                self.lastRegisteredMouseWheel = Date.now();
-                if (e.deltaY < 0) {
-                    self.setTerrainMultiplier(self.gameSettings.increment)
-                    self.updateRuler(e);
-                } else {
-                    self.setTerrainMultiplier(-self.gameSettings.increment)
-                    self.updateRuler(e);
-                }
+            if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
+                return
+
+            self.lastRegisteredMouseWheel = Date.now();
+            if (e.deltaY < 0) {
+                self.setTerrainMultiplier(self.gameSettings.increment)
+                self.updateRuler(e);
+            } else {
+                self.setTerrainMultiplier(-self.gameSettings.increment)
+                self.updateRuler(e);
             }
-        }
-        const oldTokenRotate = canvas.activeLayer._onMouseWheel;
-        canvas.activeLayer._onMouseWheel = _onMouseWheel(oldTokenRotate);
-        const oldCanvasZoom = canvas._onMouseWheel;
-        canvas._onMouseWheel = _onMouseWheel(oldCanvasZoom);
+        }, 'MIXED')
 
         return this;
     }
