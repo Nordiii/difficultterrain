@@ -24,7 +24,8 @@ export class TerrainCalculation {
     calculateDistance(oldMeasureFunction, self, playerData) {
         return function (segments, options = {}) {
             const res = oldMeasureFunction.apply(this, arguments);
-
+            if (segments.length === 0)
+                return res;
             let currentWaypoints = [];
             let currentMultiplier;
             let data = self.getCurrentTerrainData(segments);
