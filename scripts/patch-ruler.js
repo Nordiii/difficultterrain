@@ -24,14 +24,22 @@ export function patch_ruler() {
     let currentDifficultyMultiplier = 1;
     let gameSettings = updateSettings();
     let lastRegisteredKeyPress = Date.now();
-    const rulerArray = [canvas.controls.ruler]
-    gameSettings.extendedRuler.split(",").forEach(value => {
-        let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
-        if (!(canvas.controls[value] == null))
-            rulerArray.push(canvas.controls[value])
-        else if (!(canvas.controls[lowerCaseStart] == null))
-            rulerArray.push(canvas.controls[lowerCaseStart])
-    });
+    let rulerArray = []
+
+    Hooks.on("canvasReady", () => updateRulerInstances())
+    updateRulerInstances();
+
+    function updateRulerInstances() {
+        rulerArray = []
+        rulerArray.push(canvas.controls.ruler)
+        gameSettings.extendedRuler.split(",").forEach(value => {
+            let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
+            if (!(canvas.controls[value] == null))
+                rulerArray.push(canvas.controls[value])
+            else if (!(canvas.controls[lowerCaseStart] == null))
+                rulerArray.push(canvas.controls[lowerCaseStart])
+        });
+    }
 
     const dragRulerFound = rulerArray.some(value => value.constructor.name === "DragRuler")
     Hooks.on("closeSettingsConfig", () => gameSettings = updateSettings());
@@ -40,10 +48,11 @@ export function patch_ruler() {
         if (rulerArray.every(value => value.waypoints.length === 0))
             return;
 
+
         if (rulerArray.some(value => value.waypoints.length > difficultWaypoints.length + 1))
             difficultWaypoints.push(currentDifficultyMultiplier);
     }
-    canvas.app.stage.addListener('click', handleLeftClick);
+
     const handleRightClick = () => {
         if (rulerArray.every(value => value.waypoints.length === 0))
             return;
@@ -68,7 +77,6 @@ export function patch_ruler() {
             if (difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
                 difficultWaypoints.pop();
         }
-
         if (Date.now() - lastRegisteredKeyPress < gameSettings.interval)
             return result;
         lastRegisteredKeyPress = Date.now();
@@ -113,87 +121,79 @@ export function patch_ruler() {
         oldBroadcast.apply(this, arguments);
     };
 
-    const oldRulerUpdate = rulerArray.map(value => canvas.controls["update" + value.constructor.name]);
-    oldRulerUpdate.forEach((value, index) => canvas.controls["update" + rulerArray[index].constructor.name] = function (user, ruler) {
-        if (ruler == null)
-            return value.apply(this, arguments);
-        otherPlayerWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints, ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
-        value.apply(this, arguments)
-    });
-
-    const oldRulerClear = rulerArray.map(value => value.clear);
-    oldRulerClear.forEach((value, index) => rulerArray[index].clear = function () {
-        difficultWaypoints = [];
-        value.apply(this, arguments);
-    });
-
-    /// Distance calculation
+    Hooks.on("canvasReady", () => monkeyPatchRuler())
+    monkeyPatchRuler();
+/// Distance calculation
     const oldHexDist = HexagonalGrid.prototype.measureDistances;
+
     HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
-        if (segments.length === 0)
-            return oldHexDist.apply(this, arguments);
-        let currentWaypoints = null;
-        let currentMultiplier;
+        //DIFFICULT TERRAIN PATCH
         let data = getCurrentTerrainData(segments);
+        let currentWaypoints = [];
+        let currentMultiplier;
         currentWaypoints = data[0];
         currentMultiplier = data[1];
+        let res = oldHexDist.apply(this, arguments);
 
-        if (currentWaypoints === null) {
+        if (currentWaypoints == null) {
             currentWaypoints = difficultWaypoints;
             currentMultiplier = currentDifficultyMultiplier
         }
         if (currentWaypoints == null || isNaN(currentMultiplier))
-            return oldHexDist.apply(this, arguments);
-
-        return segments.map((s, i) => {
-            let r = s.ray;
-            let [r0, c0] = this.getGridPositionFromPixels(r.A.x, r.A.y);
-            let [r1, c1] = this.getGridPositionFromPixels(r.B.x, r.B.y);
-
-            // Use cube conversion to measure distance
-            let hex0 = this._offsetToCube(r0, c0);
-            let hex1 = this._offsetToCube(r1, c1);
-            let distance = this._cubeDistance(hex0, hex1);
+            return res;
+        return res.map((s, i) => {
             if (currentWaypoints.length > i)
-                return distance * canvas.dimensions.distance * currentWaypoints[i];
-            return distance * canvas.dimensions.distance * currentMultiplier;
-
+                return s * currentWaypoints[i];
+            return s * currentMultiplier;
         });
     };
 
-    const oldSquareDist = SquareGrid.prototype.measureDistances;
-    SquareGrid.prototype.measureDistances = function (segments, options = {}) {
-        if (segments.length === 0)
-            return oldSquareDist.apply(this, arguments);
-
-        let currentWaypoints = null;
-        let currentMultiplier;
-        let data = getCurrentTerrainData(segments);
-        currentWaypoints = data[0];
-        currentMultiplier = data[1];
-
-        if (currentWaypoints === null) {
-            currentWaypoints = difficultWaypoints;
-            currentMultiplier = currentDifficultyMultiplier
-        }
-        if (currentWaypoints == null || isNaN(currentMultiplier))
-            return oldSquareDist.apply(this, arguments);
-        //Basically the original function just with difficult terrain factored in, this will probably break other modules using rulers
-        const d = canvas.dimensions;
-        return segments.map((s, i) => {
-            let r = s.ray;
-            let nx = Math.abs(Math.ceil(r.dx / d.size));
-            let ny = Math.abs(Math.ceil(r.dy / d.size));
-
-            // Determine the number of straight and diagonal moves
-            let nd = Math.min(nx, ny);
-            let ns = Math.abs(ny - nx);
-            // Linear distance for all moves
-            if (currentWaypoints.length > i)
-                return (nd + ns) * d.distance * currentWaypoints[i];
-            return (nd + ns) * d.distance * currentMultiplier;
+    function monkeyPatchRuler() {
+        difficultWaypoints = [];
+        canvas.app.stage.removeListener('click', handleLeftClick);
+        canvas.app.stage.addListener('click', handleLeftClick);
+        const oldRulerUpdate = rulerArray.map(value => canvas.controls["update" + value.constructor.name]);
+        oldRulerUpdate.forEach((value, index) => canvas.controls["update" + rulerArray[index].constructor.name] = function (user, ruler) {
+            if (ruler == null)
+                return value.apply(this, arguments);
+            otherPlayerWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints, ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
+            value.apply(this, arguments)
         });
-    };
+
+        const oldRulerClear = rulerArray.map(value => value.clear);
+        oldRulerClear.forEach((value, index) => {
+            if (!value.toString().includes("//DIFFICULT TERRAIN PATCH"))
+                rulerArray[index].clear = function () {
+                    //DIFFICULT TERRAIN PATCH
+                    difficultWaypoints = [];
+                    value.apply(this, arguments);
+                }
+        });
+
+        const oldSquareDist = SquareGrid.prototype.measureDistances;
+        SquareGrid.prototype.measureDistances = function (segments, options = {}) {
+            //DIFFICULT TERRAIN PATCH
+            let currentWaypoints = [];
+            let currentMultiplier;
+            let data = getCurrentTerrainData(segments);
+            currentWaypoints = data[0];
+            currentMultiplier = data[1];
+            let res = oldSquareDist.apply(this, arguments);
+
+            if (currentWaypoints == null) {
+                currentWaypoints = difficultWaypoints;
+                currentMultiplier = currentDifficultyMultiplier
+            }
+            if (currentWaypoints == null || isNaN(currentMultiplier))
+                return res
+
+            return res.map((s, i) => {
+                if (currentWaypoints.length > i)
+                    return s * currentWaypoints[i];
+                return s * currentMultiplier;
+            });
+        };
+    }
 
     function getCurrentTerrainData(segments) {
         for (const [key, value] of otherPlayerWaypoints.entries()) {
