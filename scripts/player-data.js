@@ -147,8 +147,6 @@ export class PlayerData {
         }
         const oldTokenRotate = canvas.activeLayer._onMouseWheel;
         canvas.activeLayer._onMouseWheel = _onMouseWheel(oldTokenRotate);
-        const oldCanvasZoom = canvas._onMouseWheel;
-        canvas._onMouseWheel = _onMouseWheel(oldCanvasZoom);
 
         return this;
     }

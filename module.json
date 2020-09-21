@@ -19,8 +19,7 @@
     }
   ],
   "esmodules": [
-    "scripts/difficult-terrain.js",
-    "scripts/shim.js"
+    "scripts/difficult-terrain.js"
   ],
   "url": "https://github.com/Nordiii/difficultterrain",
   "manifest": "https://github.com/Nordiii/difficultterrain/releases/latest/download/module.json",
