@@ -3,13 +3,19 @@ export class PlayerData {
     otherPlayerWaypoints = new Map();
     currentDifficultyMultiplier = 1;
     gameSettings;
-    lastRegisteredKeyPress = Date.now();
+    lastRegisteredKeyPress = Date.now() - Date.now();
     dragRulerFound = false;
     difficultWaypoints = [];
-    rulerArray = [canvas.controls.ruler]
+    rulerArray;
 
     constructor(ModuleSettings) {
         this.gameSettings = ModuleSettings;
+        this.updateRulerArray();
+    }
+
+    updateRulerArray() {
+        this.rulerArray = [];
+        this.rulerArray.push(canvas.controls.ruler);
         this.gameSettings.extendedRuler.split(",").forEach(value => {
             let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
             if (!(canvas.controls[value] == null))
@@ -19,6 +25,7 @@ export class PlayerData {
         });
 
         this.dragRulerFound = this.rulerArray.some(value => value.constructor.name === "DragRuler")
+        return this;
     }
 
     registerKeyEvent() {
@@ -57,11 +64,10 @@ export class PlayerData {
         const self = this;
         game.user.broadcastActivity = function (activityData) {
             let rulerBroadcasting = Object.keys(activityData).reduce((acc, propertyName) => {
-                if (self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0))
+                if (!(activityData[propertyName] == null) && self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0))
                     acc.push(propertyName)
                 return acc;
             }, []);
-
             rulerBroadcasting.forEach((value) => activityData[value] = Object.assign({
                 difficultWaypoints: self.difficultWaypoints,
                 currentDifficultyMultiplier: self.currentDifficultyMultiplier
@@ -75,6 +81,7 @@ export class PlayerData {
     registerReceiveBroadcast() {
         const oldRulerUpdate = this.rulerArray.map(value => canvas.controls["update" + value.constructor.name]);
         const self = this;
+
         oldRulerUpdate.forEach((value, index) => canvas.controls["update" + self.rulerArray[index].constructor.name] = function (user, ruler) {
             if (ruler == null)
                 return value.apply(this, arguments);
@@ -84,15 +91,24 @@ export class PlayerData {
         return this;
     }
 
-    registerMouseEvents() {
+    registerLeftClick() {
         const handleLeftClick = () => {
-            if (this.rulerArray.every(value => value.waypoints.length === 0))
+            if (this.rulerArray.every(value => value.waypoints.length === 0)) {
                 return;
-
-            if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1))
-                this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+            }
+            {
+                if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1)) {
+                    this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                }
+            }
         }
+        canvas.app.stage.removeListener('click', handleLeftClick);
         canvas.app.stage.addListener('click', handleLeftClick);
+
+        return this;
+    }
+
+    registerRightClick() {
         const handleRightClick = () => {
             if (this.rulerArray.every(value => value.waypoints.length === 0))
                 return;

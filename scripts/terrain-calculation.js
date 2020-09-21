@@ -4,53 +4,28 @@ export class TerrainCalculation {
     }
 
     registerSquareCalculation() {
+        // Distance calculation
         const oldSquareDist = SquareGrid.prototype.measureDistances;
         const playerData = this.playerData;
         const self = this;
-        SquareGrid.prototype.measureDistances = function (segments, options = {}) {
-            if (segments.length === 0)
-                return oldSquareDist.apply(this, arguments);
-
-            let currentWaypoints = null;
-            let currentMultiplier;
-            let data = self.getCurrentTerrainData(segments);
-            currentWaypoints = data[0];
-            currentMultiplier = data[1];
-
-            if (currentWaypoints === null) {
-                currentWaypoints = playerData.difficultWaypoints;
-                currentMultiplier = playerData.currentDifficultyMultiplier
-            }
-            if (currentWaypoints == null || isNaN(currentMultiplier))
-                return oldSquareDist.apply(this, arguments);
-            //Basically the original function just with difficult terrain factored in, this will probably break other modules using rulers
-            const d = canvas.dimensions;
-            return segments.map((s, i) => {
-                let r = s.ray;
-                let nx = Math.abs(Math.ceil(r.dx / d.size));
-                let ny = Math.abs(Math.ceil(r.dy / d.size));
-
-                // Determine the number of straight and diagonal moves
-                let nd = Math.min(nx, ny);
-                let ns = Math.abs(ny - nx);
-                // Linear distance for all moves
-                if (currentWaypoints.length > i)
-                    return (nd + ns) * d.distance * currentWaypoints[i];
-                return (nd + ns) * d.distance * currentMultiplier;
-            });
-        };
+        SquareGrid.prototype.measureDistances = this.calculateDistance(oldSquareDist, self, playerData)
         return this;
     }
 
     registerHexCalculation() {
-        /// Distance calculation
+        // Distance calculation
         const oldHexDist = HexagonalGrid.prototype.measureDistances;
         const playerData = this.playerData;
         const self = this;
-        HexagonalGrid.prototype.measureDistances = function (segments, options = {}) {
-            if (segments.length === 0)
-                return oldHexDist.apply(this, arguments);
-            let currentWaypoints = null;
+        HexagonalGrid.prototype.measureDistances = this.calculateDistance(oldHexDist, self, playerData)
+        return this;
+    }
+
+    calculateDistance(oldMeasureFunction, self, playerData) {
+        return function (segments, options = {}) {
+            const res = oldMeasureFunction.apply(this, arguments);
+
+            let currentWaypoints = [];
             let currentMultiplier;
             let data = self.getCurrentTerrainData(segments);
             currentWaypoints = data[0];
@@ -61,24 +36,15 @@ export class TerrainCalculation {
                 currentMultiplier = playerData.currentDifficultyMultiplier
             }
             if (currentWaypoints == null || isNaN(currentMultiplier))
-                return oldHexDist.apply(this, arguments);
+                return res
 
-            return segments.map((s, i) => {
-                let r = s.ray;
-                let [r0, c0] = this.getGridPositionFromPixels(r.A.x, r.A.y);
-                let [r1, c1] = this.getGridPositionFromPixels(r.B.x, r.B.y);
-
-                // Use cube conversion to measure distance
-                let hex0 = this._offsetToCube(r0, c0);
-                let hex1 = this._offsetToCube(r1, c1);
-                let distance = this._cubeDistance(hex0, hex1);
+            return res.map((s, i) => {
                 if (currentWaypoints.length > i)
-                    return distance * canvas.dimensions.distance * currentWaypoints[i];
-                return distance * canvas.dimensions.distance * currentMultiplier;
+                    return s * currentWaypoints[i];
+                return s * currentMultiplier;
 
             });
         };
-        return this;
     }
 
     getCurrentTerrainData(segments) {

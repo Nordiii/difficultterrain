@@ -10,9 +10,21 @@ export function patch_ruler() {
         .registerBroadcast()
         .registerKeyEvent()
         .registerReceiveBroadcast()
-        .registerMouseEvents()
+        .registerLeftClick()
+        .registerRightClick()
         .registerRulerClear();
-    new TerrainCalculation(playerData).registerHexCalculation()
+    const terrainCalculation = new TerrainCalculation(playerData)
+        .registerHexCalculation()
         .registerSquareCalculation();
 
+    //Those methods need to be re executed as these monkey patches are getting overwritten on Scene change
+    Hooks.on("canvasReady", () => {
+        playerData
+            .updateRulerArray()
+            .registerLeftClick()
+            .registerRulerClear()
+            .registerBroadcast();
+        terrainCalculation
+            .registerSquareCalculation();
+    });
 }
