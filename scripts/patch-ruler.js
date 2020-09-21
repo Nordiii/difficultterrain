@@ -13,6 +13,10 @@ export function patch_ruler() {
         .registerLeftClick()
         .registerRightClick()
         .registerRulerClear();
+
+    if (moduleSettings.useWheel)
+        playerData.registerMouseWheel();
+
     const terrainCalculation = new TerrainCalculation(playerData)
         .registerHexCalculation()
         .registerSquareCalculation();
@@ -23,7 +27,6 @@ export function patch_ruler() {
             .updateRulerArray()
             .registerLeftClick()
             .registerRulerClear()
-            .registerBroadcast();
         terrainCalculation
             .registerSquareCalculation();
     });

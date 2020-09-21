@@ -4,6 +4,7 @@ export class PlayerData {
     currentDifficultyMultiplier = 1;
     gameSettings;
     lastRegisteredKeyPress = Date.now() - Date.now();
+    lastRegisteredMouseWheel = Date.now() - Date.now();
     dragRulerFound = false;
     difficultWaypoints = [];
     rulerArray;
@@ -34,7 +35,6 @@ export class PlayerData {
 
         KeyboardManager.prototype.getKey = function (e) {
             let result = oldKeyEvent.apply(this, arguments);
-
             if (self.dragRulerFound && e.key === "x") {
                 if (self.difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
                     self.difficultWaypoints.pop();
@@ -81,7 +81,6 @@ export class PlayerData {
     registerReceiveBroadcast() {
         const oldRulerUpdate = this.rulerArray.map(value => canvas.controls["update" + value.constructor.name]);
         const self = this;
-
         oldRulerUpdate.forEach((value, index) => canvas.controls["update" + self.rulerArray[index].constructor.name] = function (user, ruler) {
             if (ruler == null)
                 return value.apply(this, arguments);
@@ -124,6 +123,33 @@ export class PlayerData {
             if (e.target.id === "board")
                 handleRightClick();
         });
+        return this;
+    }
+
+    registerMouseWheel() {
+        let self = this;
+        const _onMouseWheel = function (oldClassReference) {
+            return function (e) {
+                if (!self.rulerArray.some(value => value.waypoints.length > 0))
+                    return oldClassReference.apply(this, arguments);
+
+                if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
+                    return;
+                self.lastRegisteredMouseWheel = Date.now();
+                if (e.deltaY < 0) {
+                    self.setTerrainMultiplier(self.gameSettings.increment)
+                    self.updateRuler(e);
+                } else {
+                    self.setTerrainMultiplier(-self.gameSettings.increment)
+                    self.updateRuler(e);
+                }
+            }
+        }
+        const oldTokenRotate = canvas.activeLayer._onMouseWheel;
+        canvas.activeLayer._onMouseWheel = _onMouseWheel(oldTokenRotate);
+        const oldCanvasZoom = canvas._onMouseWheel;
+        canvas._onMouseWheel = _onMouseWheel(oldCanvasZoom);
+
         return this;
     }
 

@@ -12,6 +12,7 @@ export class ModuleSettings {
             this.max = game.settings.get("difficultterrain", "maxTerrainMultiplier");
             this.increment = game.settings.get("difficultterrain", "terrainMultiplierSteps");
             this.interval = game.settings.get("difficultterrain", "incrementSpeed");
+            this.useWheel = game.settings.get("difficultterrain", "mousewheelCycle");
             this.incrementHotkey = game.settings.get("difficultterrain", "incrementHotkey");
             this.decreaseHotkey = game.settings.get("difficultterrain", "decreaseHotkey");
             this.extendedRuler = game.settings.get("difficultterrain", "extendedRuler");
@@ -44,6 +45,14 @@ export class ModuleSettings {
             config: true,
             default: 200,
             type: Number
+        });
+        game.settings.register('difficultterrain', "mousewheelCycle", {
+            name: "difficultterrain.mousewheelCycle.n",
+            hint: "difficultterrain.mousewheelCycle.h",
+            scope: "client",
+            config: true,
+            default: false,
+            type: Boolean
         });
         game.settings.register('difficultterrain', "incrementHotkey", {
             name: "difficultterrain.incrementHotkey.n",
