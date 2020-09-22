@@ -7,6 +7,7 @@ export class PlayerData {
     lastRegisteredMouseWheel = Date.now() - Date.now();
     dragRulerFound = false;
     difficultWaypoints = [];
+    lastDestination = {};
     rulerArray;
 
     constructor(ModuleSettings) {
@@ -88,7 +89,20 @@ export class PlayerData {
         oldRulerUpdate.forEach((value, index) => canvas.controls["update" + self.rulerArray[index].constructor.name] = function (user, ruler) {
             if (ruler == null)
                 return value.apply(this, arguments);
-            self.otherPlayerWaypoints.set(user.id, new detailedWaypointData(ruler.waypoints, ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
+
+            self.otherPlayerWaypoints.set(user.id, new detailedWaypointData(
+                //Remove duplicates in waypoints so that they can be compared to segments in terrain-calculation
+                ruler.waypoints.reduce((acc, current) => {
+                    if (acc.length !== 0 && self.sameDestination(acc[acc.length - 1], current)) {
+                        return acc;
+                    }
+
+                    acc.push(current);
+
+                    return acc;
+                }, []),
+                ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
+
             value.apply(this, arguments)
         });
         return this;
@@ -99,11 +113,13 @@ export class PlayerData {
             if (this.rulerArray.every(value => value.waypoints.length === 0)) {
                 return;
             }
-            {
-                if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1)) {
-                    this.difficultWaypoints.push(this.currentDifficultyMultiplier);
-                }
+            let res = this.rulerArray.filter(value => value.waypoints.length > this.difficultWaypoints.length + 1 &&
+                !this.sameDestination(this.lastDestination, value.destination));
+            if (res.length === 1) {
+                this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                this.lastDestination = res[0].destination;
             }
+
         }
         canvas.app.stage.removeListener('click', handleLeftClick);
         canvas.app.stage.addListener('click', handleLeftClick);
@@ -113,13 +129,20 @@ export class PlayerData {
 
     registerRightClick() {
         const handleRightClick = () => {
-            if (this.rulerArray.every(value => value.waypoints.length === 0))
+            if (this.rulerArray.every(value => value.waypoints.length === 0)) {
+                this.difficultWaypoints = [];
+                this.lastDestination = [];
                 return;
-            if (this.rulerArray.some(value => value.constructor.name === "DragRuler"))
-                if (this.rulerArray.some(value => value.waypoints.length > this.difficultWaypoints.length + 1)) {
-                    this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+            }
+
+            let res = this.rulerArray.filter(value => value.waypoints.length > this.difficultWaypoints.length + 1 && value.constructor.name === 'DragRuler');
+            if (res.length === 1) {
+                if (this.sameDestination(this.lastDestination, res[0].destination))
                     return;
-                }
+                this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                this.lastDestination = res[0].destination;
+                return;
+            }
             this.difficultWaypoints.pop();
         }
         //Using this because pixi right click wont register when dragging a token
@@ -160,6 +183,7 @@ export class PlayerData {
         const self = this;
         oldRulerClear.forEach((value, index) => this.rulerArray[index].clear = function () {
             self.difficultWaypoints = [];
+            self.lastDestination = {};
             value.apply(this, arguments);
         });
         return this;
@@ -200,6 +224,10 @@ export class PlayerData {
         if (game.user.hasPermission("SHOW_RULER"))
             game.user.broadcastActivity(activityData);
         currentRuler._onMouseMove(newEvent);
+    }
+
+    sameDestination(old, current) {
+        return !(old == null) && !(current == null) && old.x === current.x && old.y === current.y;
     }
 }
 

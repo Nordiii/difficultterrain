@@ -14,6 +14,9 @@ Future releases of Show-Drag-Distance may breaks this compatibility, just remove
 
 ## Changelog
 
+#### 1.0.3
+* fix difficult terrain breaking when user directly clicks twice on the same square
+ 
 #### 1.0.2
 * Refactoring 
 * Add option to enable mouse wheel as option to cycle through difficulties
