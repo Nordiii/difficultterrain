@@ -130,13 +130,12 @@ export class PlayerData {
 
     registerMouseWheel() {
         let self = this;
-        libWrapper.register(MODULE_ID, 'canvas.activeLayer._onMouseWheel', function (wrapped, e) {
+        libWrapper.register(MODULE_ID, 'PlaceablesLayer.prototype._onMouseWheel', function (wrapped, e) {
             if (!self.rulerArray.some(value => value.waypoints.length > 0))
                 return wrapped(e);
 
             if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
                 return;
-
             self.lastRegisteredMouseWheel = Date.now();
             if (e.deltaY < 0) {
                 self.setTerrainMultiplier(self.gameSettings.increment)
