@@ -6,18 +6,18 @@ export class TerrainCalculation {
     registerSquareCalculation() {
         // Distance calculation
         const oldSquareDist = SquareGrid.prototype.measureDistances;
-        const playerData = this.playerData;
+        const {playerData} = this;
         const self = this;
-        SquareGrid.prototype.measureDistances = this.calculateDistance(oldSquareDist, self, playerData)
+        SquareGrid.prototype.measureDistances = this.calculateDistance(oldSquareDist, self, playerData);
         return this;
     }
 
     registerHexCalculation() {
         // Distance calculation
         const oldHexDist = HexagonalGrid.prototype.measureDistances;
-        const playerData = this.playerData;
+        const {playerData} = this;
         const self = this;
-        HexagonalGrid.prototype.measureDistances = this.calculateDistance(oldHexDist, self, playerData)
+        HexagonalGrid.prototype.measureDistances = this.calculateDistance(oldHexDist, self, playerData);
         return this;
     }
 
@@ -32,12 +32,12 @@ export class TerrainCalculation {
             currentWaypoints = data[0];
             currentMultiplier = data[1];
 
-            if (currentWaypoints === null) {
+            if (currentWaypoints == null) {
                 currentWaypoints = playerData.difficultWaypoints;
-                currentMultiplier = playerData.currentDifficultyMultiplier
+                currentMultiplier = playerData.currentDifficultyMultiplier;
             }
             if (currentWaypoints == null || isNaN(currentMultiplier))
-                return res
+                return res;
 
             return res.map((s, i) => {
                 if (currentWaypoints.length > i)
@@ -72,6 +72,6 @@ export class TerrainCalculation {
 
             return [value.difficultyMultiplierWayPoints, value.difficultMultiplierNow];
         }
-        return [null, 1]
+        return [null, 1];
     }
 }
