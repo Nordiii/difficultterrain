@@ -1,14 +1,16 @@
 {
   "difficultterrain.maxTerrainMultiplier.n": "Maximaler Multiplikator",
-  "difficultterrain.maxTerrainMultiplier.h": "Größtmöglicher Multiplikator, der in die Distanz eingerechnet werden kann (funktioniert nur bei den vom Modul erzeugten Linealen)",
+  "difficultterrain.maxTerrainMultiplier.h": "Größtmöglicher Multiplikator, der in die Distanz eingerechnet werden kann (funktioniert nur bei den vom Modul erzeugten Linealen).",
   "difficultterrain.terrainMultiplierSteps.n": "Wert um den der Multiplikator erhöht/verkleinert wird",
-  "difficultterrain.terrainMultiplierSteps.h": "Wert um den der Multiplikator erhöht/verkleinert wird beim drücken von x/y",
+  "difficultterrain.terrainMultiplierSteps.h": "Wert um den der Multiplikator erhöht/verkleinert wird beim drücken von x/y.",
   "difficultterrain.incrementSpeed.n": "Zeit zwischen registriertem drücken von x/y (Lokal)",
-  "difficultterrain.incrementSpeed.h": "Zeit (1 Sekunde = 1000) zwischen der erneuten Registrierung von x/y zur erhöhung/verringerung des Wertes für schwieriges Gelände",
+  "difficultterrain.incrementSpeed.h": "Zeit (1 Sekunde = 1000) zwischen der erneuten Registrierung von x/y zur erhöhung/verringerung des Wertes für schwieriges Gelände.",
+  "difficultterrain.mousewheelCycle.n": "Benutzen Sie das Mausrad + strg/shift, um den Schwierigkeitsgrad des Geländes zu ändern (Lokal)",
+  "difficultterrain.mousewheelCycle.h": "Aktualisierung der Website erforderlich! Dadurch wird es möglich, mit dem Mausrad durch Multiplikatoren zu wechseln. Dies deaktiviert jedoch den Zoom und die Token-Rotation, wenn Sie gerade ein Lineal zeichnen.",
   "difficultterrain.incrementHotkey.n": "Hotkey zum Erhöhen der Geländeschwierigkeit (Lokal)",
-  "difficultterrain.incrementHotkey.h": "Sie können hier jeden beliebige Zeichen eingeben, keine kombinierten Zeichen möglich",
+  "difficultterrain.incrementHotkey.h": "Sie können hier jeden beliebige Zeichen eingeben, keine kombinierten Zeichen möglich.",
   "difficultterrain.decreaseHotkey.n": "Hotkey zur Verringerung der Geländeschwierigkeit  (Lokal)",
-  "difficultterrain.decreaseHotkey.h": "Sie können hier jeden beliebige Zeichen eingeben, keine kombinierten Zeichen möglich",
+  "difficultterrain.decreaseHotkey.h": "Sie können hier jeden beliebige Zeichen eingeben, keine kombinierten Zeichen möglich.",
   "difficultterrain.extendedRuler.n": "Modulklassen die die Standardlinealklasse Erweitern (experimentell)",
-  "difficultterrain.extendedRuler.h": "Für den Fall, dass ein Modul die Linealklasse erweitert (siehe Show Drag Distance), können Sie den Klassennamen hier durch ein ',' getrennt hinzufügen.\n Das könnte für Komptabilität mit diesem Modul sorgen."
+  "difficultterrain.extendedRuler.h": "Für den Fall, dass ein Modul die Linealklasse erweitert (siehe Show Drag Distance), können Sie den Klassennamen hier durch ein ',' getrennt hinzufügen.\n Das könnte für Kompatibilität mit diesem Modul sorgen."
 }

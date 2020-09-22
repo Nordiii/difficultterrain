@@ -14,6 +14,10 @@ Future releases of Show-Drag-Distance may breaks this compatibility, just remove
 
 ## Changelog
 
+#### 1.0.2
+* Refactoring 
+* Add option to enable mouse wheel as option to cycle through difficulties
+
 #### 1.0.1
 * Fixed issue with scene changes (possible only when scene changes grid type) breaking this module  
 * Fixed issue with alternative movement rules

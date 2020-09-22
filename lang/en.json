@@ -5,6 +5,8 @@
   "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
   "difficultterrain.incrementSpeed.n": "Time between registered hotkey push (client)",
   "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between applying increment/decrease difficult terrain value",
+  "difficultterrain.mousewheelCycle.n": "Use mouse wheel + ctrl/shift to change terrain difficulty (client)",
+  "difficultterrain.mousewheelCycle.h": "Website refresh needed! This will enable the ability to cycle through multipliers with the mouse wheel. This will however disable zoom and token rotation when you're currently drawing a ruler",
   "difficultterrain.incrementHotkey.n": "Hotkey to increment terrain difficulty (client)",
   "difficultterrain.incrementHotkey.h": "You can enter any key here, no combined keys possible",
   "difficultterrain.decreaseHotkey.n": "Hotkey to decrease terrain difficulty (client)",
