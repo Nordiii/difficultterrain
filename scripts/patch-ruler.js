@@ -26,7 +26,7 @@ export function patch_ruler() {
         playerData
             .updateRulerArray()
             .registerLeftClick()
-            .registerRulerClear()
+            .registerRulerClear();
         terrainCalculation
             .registerSquareCalculation();
     });

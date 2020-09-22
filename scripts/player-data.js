@@ -66,7 +66,11 @@ export class PlayerData {
         const self = this;
         game.user.broadcastActivity = function (activityData) {
             let rulerBroadcasting = Object.keys(activityData).reduce((acc, propertyName) => {
-                if (!(activityData[propertyName] == null) && self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0))
+                if (
+                    !(activityData[propertyName] == null)
+                    &&
+                    self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0)
+                )
                     acc.push(propertyName)
                 return acc;
             }, []);
@@ -161,9 +165,9 @@ export class PlayerData {
 
     setTerrainMultiplier(amount) {
         if (this.currentDifficultyMultiplier === this.gameSettings.max && amount > 0)
-            this.currentDifficultyMultiplier = 1
+            this.currentDifficultyMultiplier = 1;
         else if (this.currentDifficultyMultiplier === 1 && amount < 0)
-            this.currentDifficultyMultiplier = this.gameSettings.max
+            this.currentDifficultyMultiplier = this.gameSettings.max;
         else
             this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.gameSettings.max);
     }
