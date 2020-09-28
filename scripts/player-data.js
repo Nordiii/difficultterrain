@@ -21,6 +21,7 @@ export class PlayerData {
     updateRulerArray() {
         this.rulerArray = [];
         this.rulerArray.push(canvas.controls.ruler);
+        console.log(this.rulerArray[0].constructor.name)
         this.gameSettings.extendedRuler.split(",").forEach(value => {
             let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
             if (!(canvas.controls[value] == null))
