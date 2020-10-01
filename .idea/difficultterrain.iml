@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="FoundryVTT" level="project" />
+    <orderEntry type="library" name="foundry" level="application" />
   </component>
 </module>

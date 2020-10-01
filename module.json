@@ -3,7 +3,7 @@
   "title": "Difficult Terrain",
   "description": "Add a difficult terrain multiplier to your ruler!",
   "author": "Nordiii",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "languages": [
@@ -23,5 +23,5 @@
   ],
   "url": "https://github.com/Nordiii/difficultterrain",
   "manifest": "https://github.com/Nordiii/difficultterrain/releases/latest/download/module.json",
-  "download": "https://github.com/Nordiii/difficultterrain/releases/download/1.0.3/module.zip"
+  "download": "https://github.com/Nordiii/difficultterrain/releases/latest/download/module.zip"
 }

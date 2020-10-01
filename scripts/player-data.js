@@ -1,7 +1,10 @@
+import {TerrainCalculation} from "./terrain-calculation.js";
+
 export class PlayerData {
 
     otherPlayerWaypoints = new Map();
     currentDifficultyMultiplier = 1;
+    hotkeyIncrement = true;
     gameSettings;
     lastRegisteredKeyPress = Date.now() - Date.now();
     lastRegisteredMouseWheel = Date.now() - Date.now();
@@ -60,15 +63,54 @@ export class PlayerData {
         return this;
     }
 
+    registerMouseMoveEvent() {
+        const handleMouseMove = (e) => {
+            let ruler = this.rulerArray.find(value =>
+              value.waypoints.length > 0 && value.destination != null
+            );
+            if (ruler == null) {
+                return;
+            }
+
+            let start = ruler.waypoints[ruler.waypoints.length - 1];
+            let end = ruler.destination;
+
+            let startGrid = canvas.grid.grid.getGridPositionFromPixels(start.x, start.y);
+            let endGrid = canvas.grid.grid.getGridPositionFromPixels(end.x, end.y);
+
+            let line = TerrainCalculation.calcStraightLine(startGrid, endGrid);
+            let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false);
+            if (grid == null) {
+                if (!this.hotkeyIncrement) {
+                    this.currentDifficultyMultiplier = 1;
+                    this.hotkeyIncrement = true;
+                    this.updateRuler(e)
+                }
+                return;
+            }
+
+            this.hotkeyIncrement = false;
+            if (this.currentDifficultyMultiplier === grid.multiple)
+                return;
+            this.currentDifficultyMultiplier = grid.multiple;
+            this.updateRuler(e)
+
+
+        };
+        canvas.app.stage.removeListener("pointermove", handleMouseMove)
+        canvas.app.stage.addListener("pointermove", handleMouseMove, true)
+        return this;
+    }
+
     registerBroadcast() {
         const oldBroadcast = game.user.broadcastActivity;
         const self = this;
         game.user.broadcastActivity = function (activityData) {
             let rulerBroadcasting = Object.keys(activityData).reduce((acc, propertyName) => {
                 if (
-                    !(activityData[propertyName] == null)
-                    &&
-                    self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0)
+                  !(activityData[propertyName] == null)
+                  &&
+                  self.rulerArray.some(value => value.constructor.name.localeCompare(propertyName, undefined, {sensitivity: 'base'}) === 0)
                 )
                     acc.push(propertyName)
                 return acc;
@@ -91,17 +133,17 @@ export class PlayerData {
                 return value.apply(this, arguments);
 
             self.otherPlayerWaypoints.set(user.id, new detailedWaypointData(
-                //Remove duplicates in waypoints so that they can be compared to segments in terrain-calculation
-                ruler.waypoints.reduce((acc, current) => {
-                    if (acc.length !== 0 && self.sameDestination(acc[acc.length - 1], current)) {
-                        return acc;
-                    }
+              //Remove duplicates in waypoints so that they can be compared to segments in terrain-calculation
+              ruler.waypoints.reduce((acc, current) => {
+                  if (acc.length !== 0 && self.sameDestination(acc[acc.length - 1], current)) {
+                      return acc;
+                  }
 
-                    acc.push(current);
+                  acc.push(current);
 
-                    return acc;
-                }, []),
-                ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
+                  return acc;
+              }, []),
+              ruler.destination, ruler.difficultWaypoints, ruler.currentDifficultyMultiplier));
 
             value.apply(this, arguments)
         });
@@ -114,7 +156,7 @@ export class PlayerData {
                 return;
             }
             let res = this.rulerArray.filter(value => value.waypoints.length > this.difficultWaypoints.length + 1 &&
-                !this.sameDestination(this.lastDestination, value.destination));
+              !this.sameDestination(this.lastDestination, value.destination));
             if (res.length === 1) {
                 this.difficultWaypoints.push(this.currentDifficultyMultiplier);
                 this.lastDestination = res[0].destination;
@@ -184,12 +226,14 @@ export class PlayerData {
         oldRulerClear.forEach((value, index) => this.rulerArray[index].clear = function () {
             self.difficultWaypoints = [];
             self.lastDestination = {};
-            value.apply(this, arguments);
+            return value.apply(this, arguments);
         });
         return this;
     }
 
     setTerrainMultiplier(amount) {
+        if (!this.hotkeyIncrement)
+            return;
         if (this.currentDifficultyMultiplier === this.gameSettings.max && amount > 0)
             this.currentDifficultyMultiplier = 1;
         else if (this.currentDifficultyMultiplier === 1 && amount < 0)

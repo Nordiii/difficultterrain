@@ -1,82 +1,106 @@
+const ModuleId= "difficultterrain"
 export class ModuleSettings {
+
     max;
     increment;
     interval;
     incrementHotkey;
     decreaseHotkey;
     extendedRuler;
-
+    useTerrainLayer;
 
     constructor() {
         let getCurrentSettings = () => {
-            this.max = game.settings.get("difficultterrain", "maxTerrainMultiplier");
-            this.increment = game.settings.get("difficultterrain", "terrainMultiplierSteps");
-            this.interval = game.settings.get("difficultterrain", "incrementSpeed");
-            this.useWheel = game.settings.get("difficultterrain", "mousewheelCycle");
-            this.incrementHotkey = game.settings.get("difficultterrain", "incrementHotkey");
-            this.decreaseHotkey = game.settings.get("difficultterrain", "decreaseHotkey");
-            this.extendedRuler = game.settings.get("difficultterrain", "extendedRuler");
+            this.max = game.settings.get(ModuleId, "maxTerrainMultiplier");
+            this.increment = game.settings.get(ModuleId, "terrainMultiplierSteps");
+            this.interval = game.settings.get(ModuleId, "incrementSpeed");
+            this.useWheel = game.settings.get(ModuleId, "mousewheelCycle");
+            this.incrementHotkey = game.settings.get(ModuleId, "incrementHotkey");
+            this.decreaseHotkey = game.settings.get(ModuleId, "decreaseHotkey");
+            this.extendedRuler = game.settings.get(ModuleId, "extendedRuler");
+            this.useTerrainLayer = game.settings.get(ModuleId, "useTerrainLayer");
         }
         getCurrentSettings();
         Hooks.on("closeSettingsConfig", () => getCurrentSettings());
     }
 
+    static getModuleId(){
+        return ModuleId;
+    }
+
     static registerSettings() {
-        game.settings.register('difficultterrain', "maxTerrainMultiplier", {
-            name: "difficultterrain.maxTerrainMultiplier.n",
-            hint: "difficultterrain.maxTerrainMultiplier.h",
+        game.settings.register(ModuleId, "dontShowAgainTerrainLayer", {
+            name: "Only Show on update",
+            hint: "Only Show on update",
+            scope: "client",
+            config: false,
+            default: false,
+            type: Boolean
+        });
+
+        game.settings.register(ModuleId, "maxTerrainMultiplier", {
+            name: ModuleId+".maxTerrainMultiplier.n",
+            hint: ModuleId+".maxTerrainMultiplier.h",
             scope: "world",
             config: true,
             default: 2,
             type: Number
         });
-        game.settings.register('difficultterrain', "terrainMultiplierSteps", {
-            name: "difficultterrain.terrainMultiplierSteps.n",
-            hint: "difficultterrain.terrainMultiplierSteps.h",
+        game.settings.register(ModuleId, "terrainMultiplierSteps", {
+            name: ModuleId+".terrainMultiplierSteps.n",
+            hint: ModuleId+".terrainMultiplierSteps.h",
             scope: "world",
             config: true,
             default: 1,
             type: Number
         });
-        game.settings.register('difficultterrain', "incrementSpeed", {
-            name: "difficultterrain.incrementSpeed.n",
-            hint: "difficultterrain.incrementSpeed.h",
+        game.settings.register(ModuleId, "incrementSpeed", {
+            name: ModuleId+".incrementSpeed.n",
+            hint: ModuleId+".incrementSpeed.h",
             scope: "client",
             config: true,
             default: 200,
             type: Number
         });
-        game.settings.register('difficultterrain', "mousewheelCycle", {
-            name: "difficultterrain.mousewheelCycle.n",
-            hint: "difficultterrain.mousewheelCycle.h",
+        game.settings.register(ModuleId, "mousewheelCycle", {
+            name: ModuleId+".mousewheelCycle.n",
+            hint: ModuleId+".mousewheelCycle.h",
             scope: "client",
             config: true,
             default: false,
             type: Boolean
         });
-        game.settings.register('difficultterrain', "incrementHotkey", {
-            name: "difficultterrain.incrementHotkey.n",
-            hint: "difficultterrain.incrementHotkey.h",
+        game.settings.register(ModuleId, "incrementHotkey", {
+            name: ModuleId+".incrementHotkey.n",
+            hint: ModuleId+".incrementHotkey.h",
             scope: "client",
             config: true,
             default: "+",
             type: String
         });
-        game.settings.register('difficultterrain', "decreaseHotkey", {
-            name: "difficultterrain.decreaseHotkey.n",
-            hint: "difficultterrain.decreaseHotkey.h",
+        game.settings.register(ModuleId, "decreaseHotkey", {
+            name: ModuleId+".decreaseHotkey.n",
+            hint: ModuleId+".decreaseHotkey.h",
             scope: "client",
             config: true,
             default: "-",
             type: String
         });
-        game.settings.register('difficultterrain', "extendedRuler", {
-            name: "difficultterrain.extendedRuler.n",
-            hint: "difficultterrain.extendedRuler.h",
+        game.settings.register(ModuleId, "extendedRuler", {
+            name: ModuleId+".extendedRuler.n",
+            hint: ModuleId+".extendedRuler.h",
             scope: "world",
             config: true,
             default: "DragRuler",
             type: String
+        });
+        game.settings.register(ModuleId, "useTerrainLayer", {
+            name: ModuleId+".useTerrainLayer.n",
+            hint: ModuleId+".useTerrainLayer.h",
+            scope: "world",
+            config: true,
+            default: false,
+            type: Boolean
         });
     }
 }
