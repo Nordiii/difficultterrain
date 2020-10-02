@@ -80,6 +80,7 @@ export class PlayerData {
 
             let line = TerrainCalculation.calcStraightLine(startGrid, endGrid);
             let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false);
+
             if (grid == null) {
                 if (!this.hotkeyIncrement) {
                     this.currentDifficultyMultiplier = 1;

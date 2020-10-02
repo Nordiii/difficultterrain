@@ -29,12 +29,15 @@ A ruler path segment going over a terrain layer will enforce its multiplier on t
 ## Known Issues
 ### Major
 (With Terrain Layer compatibility enabled)
-* Hex fields can get wacky, most of the times it works but sometimes the terrain layer marker will be ignored
-### Minor
-(With Terrain Layer compatibility enabled)
-* Starting a new Ruler after ending a ruler will often display (for other players) the ruler going to the last endpoint until the mouse gets moved a little more
+* [HexagonalGrid] Ruler sometimes ignores the terrain layer marker
+* [SquareGrid] Ruler sometimes ignores the terrain layer marker
+
+Both issues happen because the path does not get calculated the same way how the highlighted ruler path is calculated.
 
 ## Changelog
+
+#### 1.0.5
+* improve Terrain Layer support for HexGrids, this will make it a lot better
 
 #### 1.0.4
 * add basic support for Terrain Layer

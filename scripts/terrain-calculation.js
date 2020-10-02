@@ -74,21 +74,70 @@ export class TerrainCalculation {
         return [null, 1];
     }
 
-    // Following code is from Will Sanders module https://github.com/wsaunders1014/EnhancedMovement/blob/master/enhanced-movement.js
+    // parts of the following code are from Will Sanders module https://github.com/wsaunders1014/EnhancedMovement/blob/master/enhanced-movement.js
 
     static calcStraightLine(startCoordinates, endCoordinates) {
-        const coordinatesArray = [];
+
         // Translate coordinates
         let [x1, y1] = startCoordinates
         let [x2, y2] = endCoordinates
+
+        switch (canvas.scene.data.gridType) {
+            case 0:
+                return TerrainCalculation.squareGridLine(x1, x2, y1, y2)
+            case 1:
+                return TerrainCalculation.squareGridLine(x1, x2, y1, y2)
+            default:
+                return TerrainCalculation.hexGridLine(x1, x2, y1, y2)
+        }
+    }
+
+    static checkForTerrain(x, y) {
+        if (canvas.terrain.costGrid[x] == null) return false
+        if (canvas.terrain.costGrid[x][y] == null) return false
+
+        return canvas.terrain.costGrid[x][y];
+    }
+
+    static hexGridLine(x1, x2, y1, y2) {
+        let startCube = TerrainCalculation._offsetToCube(x1, y1)
+
+        let endCube = TerrainCalculation._offsetToCube(x2, y2)
+        let n = TerrainCalculation._cubeDistance(startCube, endCube)// Math.floor(Math.sqrt(Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)))
+        const coordinatesArray = [];
+        let pixStart = canvas.grid.grid.getPixelsFromGridPosition(x1, y1);
+        let pixEnd = canvas.grid.grid.getPixelsFromGridPosition(x2, y2);
+
+        pixStart = canvas.grid.grid.getCenter(pixStart[0], pixStart[1])
+        pixEnd = canvas.grid.grid.getCenter(pixEnd[0], pixEnd[1])
+
+        for (let i = 1; i <= n; i += 1) {
+
+            let X = TerrainCalculation.lerp(pixStart[0], pixEnd[0], (1.0 / n) * i);
+            let Y = TerrainCalculation.lerp(pixStart[1], pixEnd[1], (1.0 / n) * i);
+
+            let position = canvas.grid.grid.getGridPositionFromPixels(X, Y)
+
+            coordinatesArray.push(position);
+        }
+        return coordinatesArray;
+
+    }
+
+    static lerp(start, end, amount) {
+        return (1 - amount) * start + amount * end;
+    };
+
+    static squareGridLine(x1, x2, y1, y2) {
+        const coordinatesArray = [];
         // Define differences and error check
-        const dx = Math.abs(x2 - x1);
-        const dy = Math.abs(y2 - y1);
-        let sx, sy;
-        if (canvas.scene.data.gridType === 0) {
+        let dx = Math.abs(x2 - x1);
+        let dy = Math.abs(y2 - y1);
+        let sx,sy;
+        if(canvas.scene.data.gridType === 0){
             sx = (x1 < x2) ? 10 : -10;
             sy = (y1 < y2) ? 10 : -10;
-        } else {
+        }else{
             sx = (x1 < x2) ? 1 : -1;
             sy = (y1 < y2) ? 1 : -1;
         }
@@ -97,7 +146,7 @@ export class TerrainCalculation {
         //coordinatesArray.push([x1, y1]);
         // Main loop
         while (!((x1 === x2) && (y1 === y2))) {
-            const e2 = err << 1;
+            let e2 = err << 1;
             if (e2 > -dy) {
                 err -= dy;
                 x1 += sx;
@@ -111,13 +160,34 @@ export class TerrainCalculation {
         }
         // Return the result
         return coordinatesArray;
+
     }
 
-    static checkForTerrain(x, y) {
-        if (canvas.terrain.costGrid[x] == null) return false
-        if (canvas.terrain.costGrid[x][y] == null) return false
-
-        return canvas.terrain.costGrid[x][y];
+    // Following methods are private methods copied from the API
+    static _cubeDistance(a, b) {
+        let diff = {q: a.q - b.q, r: a.r - b.r, s: a.s - b.s};
+        return (Math.abs(diff.q) + Math.abs(diff.r) + Math.abs(diff.s)) / 2;
     }
+
+    static _offsetToCube(row, col) {
+        let offset = canvas.grid.grid.options.even ? 1 : -1;
+
+        // Column orientation
+        if (canvas.grid.grid.columns) {
+            let q = col,
+              r = row - (col + offset * (col & 1)) / 2,
+              s = 0 - q - r;
+            return {q: q, r: r, s: s}
+        }
+
+        // Row orientation
+        else {
+            let r = row,
+              q = col - (row + offset * (row & 1)) / 2,
+              s = 0 - q - r;
+            return {q: q, r: r, s: s}
+        }
+    }
+
 }
 
