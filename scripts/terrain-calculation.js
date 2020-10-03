@@ -111,9 +111,12 @@ export class TerrainCalculation {
 
     static oddHexRowLine(x1, x2, y1, y2) {
         let startCube = TerrainCalculation.toCube(x1, y1)
-        let endCube = TerrainCalculation.toCube(x2, y2)
-        let n = TerrainCalculation.cubeDistance(startCube, endCube)
 
+        let endCube = TerrainCalculation.toCube(x2, y2)
+
+        let n = TerrainCalculation.cubeDistance(startCube, endCube)
+        startCube = this.addEpsilon(startCube)
+        endCube = this.addEpsilon(endCube)
         const coordinatesArray = [];
         for (let i = 0; i <= n; i += 1)
             coordinatesArray.push(TerrainCalculation.toHex(TerrainCalculation.cube_lerp(startCube, endCube, (1.0 / n) * i)))
@@ -121,34 +124,34 @@ export class TerrainCalculation {
         return coordinatesArray;
     }
 
+    static addEpsilon(Cube) {
+        return {
+            x: Cube.x + 1e-6,
+            z: Cube.z + 2e-6,
+            y: Cube.y - 3e-6
+        }
+    }
+
     static cube_lerp(startPoint, endPoint, t) {
-        // if (canvas.grid.grid.even)
-        //     t = -t;
-        let cube = {
+        return {
             x: (TerrainCalculation.lerp(startPoint.x, endPoint.x, t)),
             y: (TerrainCalculation.lerp(startPoint.y, endPoint.y, t)),
             z: (TerrainCalculation.lerp(startPoint.z, endPoint.z, t)),
         }
-        return cube
     }
 
     static toHex(cube) {
         let rx, ry, rz;
         console.log(cube)
-        if (canvas.grid.grid.even && canvas.grid.grid.columns) {
-            rx = Math.round(cube.x - 0.1)
-            ry = Math.round(cube.y - 0.1)
-            rz = Math.round(cube.z - 0.1)
-        }else {
-            rx = Math.round(cube.x)
-            ry = Math.round(cube.y)
-            rz = Math.round(cube.z)
-        }
+
+        rx = Math.round(cube.x)
+        ry = Math.round(cube.y)
+        rz = Math.round(cube.z)
 
 
-        var x_diff = Math.abs(rx - cube.x)
-        var y_diff = Math.abs(ry - cube.y)
-        var z_diff = Math.abs(rz - cube.z)
+        let x_diff = Math.abs(rx - cube.x)
+        let y_diff = Math.abs(ry - cube.y)
+        let z_diff = Math.abs(rz - cube.z)
 
         if (x_diff > y_diff && x_diff > z_diff)
             rx = -ry - rz
@@ -195,26 +198,5 @@ export class TerrainCalculation {
         return {x: col, z: row, y: 0 - row - col}
     }
 
-    // static offsetToCube(row, col, even, columns) {
-    //     let offset = even ? 1 : -1;
-    //
-    Column
-    orientation
-    // if (columns) {
-    //     let q = col,
-    //       r = row - (col + offset * (col & 1)) / 2,
-    //       s = 0 - q - r;
-    //     return {q: q, r: r, s: s}
-    // }
-    //
-    Row
-    orientation
-    // else {
-    //     let r = row,
-    //       q = col - (row + offset * (row & 1)) / 2,
-    //       s = 0 - q - r;
-    //     return {q: q, r: r, s: s}
-    // }
-    // }
 }
 
