@@ -74,8 +74,6 @@ export class TerrainCalculation {
         return [null, 1];
     }
 
-    // parts of the following code are from Will Sanders module https://github.com/wsaunders1014/EnhancedMovement/blob/master/enhanced-movement.js
-
     static calcStraightLine(startCoordinates, endCoordinates) {
 
         // Translate coordinates
@@ -104,6 +102,11 @@ export class TerrainCalculation {
 
         let endCube = TerrainCalculation._offsetToCube(x2, y2)
         let n = TerrainCalculation._cubeDistance(startCube, endCube)// Math.floor(Math.sqrt(Math.pow(Math.abs(x1 - x2), 2) + Math.pow(Math.abs(y1 - y2), 2)))
+
+        return TerrainCalculation.calculatePoints(x1, x2, y1, y2, n)
+    }
+
+    static calculatePoints(x1, x2, y1, y2, n) {
         const coordinatesArray = [];
         let pixStart = canvas.grid.grid.getPixelsFromGridPosition(x1, y1);
         let pixEnd = canvas.grid.grid.getPixelsFromGridPosition(x2, y2);
@@ -121,7 +124,6 @@ export class TerrainCalculation {
             coordinatesArray.push(position);
         }
         return coordinatesArray;
-
     }
 
     static lerp(start, end, amount) {
@@ -129,38 +131,12 @@ export class TerrainCalculation {
     };
 
     static squareGridLine(x1, x2, y1, y2) {
-        const coordinatesArray = [];
         // Define differences and error check
         let dx = Math.abs(x2 - x1);
         let dy = Math.abs(y2 - y1);
-        let sx,sy;
-        if(canvas.scene.data.gridType === 0){
-            sx = (x1 < x2) ? 10 : -10;
-            sy = (y1 < y2) ? 10 : -10;
-        }else{
-            sx = (x1 < x2) ? 1 : -1;
-            sy = (y1 < y2) ? 1 : -1;
-        }
-        let err = dx - dy;
-        // Set first coordinates
-        //coordinatesArray.push([x1, y1]);
-        // Main loop
-        while (!((x1 === x2) && (y1 === y2))) {
-            let e2 = err << 1;
-            if (e2 > -dy) {
-                err -= dy;
-                x1 += sx;
-            }
-            if (e2 < dx) {
-                err += dx;
-                y1 += sy;
-            }
-            // Set coordinates
-            coordinatesArray.push([x1, y1]);
-        }
-        // Return the result
-        return coordinatesArray;
+        let n = Math.max(dx, dy)
 
+        return TerrainCalculation.calculatePoints(x1, x2, y1, y2, n)
     }
 
     // Following methods are private methods copied from the API
