@@ -36,13 +36,14 @@ export class TerrainCalculation {
                 currentWaypoints = playerData.difficultWaypoints;
                 currentMultiplier = playerData.currentDifficultyMultiplier;
             }
-            if (currentWaypoints == null || isNaN(currentMultiplier))
+
+            if (currentWaypoints == null || currentMultiplier == null)
                 return res;
+
             return res.map((s, i) => {
                 if (currentWaypoints.length > i)
-                    return s * currentWaypoints[i];
-                return s * currentMultiplier;
-
+                    return currentWaypoints[i].reduce((acc, val) => acc + (s / currentWaypoints[i].length) * val, 0);
+                return currentMultiplier.reduce((acc, val) => acc + (s / currentMultiplier.length) * val, 0);
             });
         };
     }

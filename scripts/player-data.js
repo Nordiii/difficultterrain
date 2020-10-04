@@ -3,7 +3,7 @@ import {TerrainCalculation} from "./terrain-calculation.js";
 export class PlayerData {
 
     otherPlayerWaypoints = new Map();
-    currentDifficultyMultiplier = 1;
+    currentDifficultyMultiplier = [1];
     hotkeyIncrement = true;
     gameSettings;
     lastRegisteredKeyPress = Date.now() - Date.now();
@@ -79,11 +79,10 @@ export class PlayerData {
             let endGrid = canvas.grid.grid.getGridPositionFromPixels(end.x, end.y);
 
             let line = TerrainCalculation.calcStraightLine(startGrid, endGrid);
-            let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false);
-
-            if (grid == null) {
+            let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).map(value => !value ? 1 : value.multiple);
+            if (grid.every(value => value === 1)) {
                 if (!this.hotkeyIncrement) {
-                    this.currentDifficultyMultiplier = 1;
+                    this.currentDifficultyMultiplier = [1];
                     this.hotkeyIncrement = true;
                     this.updateRuler(e)
                 }
@@ -91,9 +90,10 @@ export class PlayerData {
             }
 
             this.hotkeyIncrement = false;
-            if (this.currentDifficultyMultiplier === grid.multiple)
+
+            if (this.difficultWaypoints.equals(grid))
                 return;
-            this.currentDifficultyMultiplier = grid.multiple;
+            this.currentDifficultyMultiplier = grid;
             this.updateRuler(e)
 
 
@@ -132,7 +132,6 @@ export class PlayerData {
         oldRulerUpdate.forEach((value, index) => canvas.controls["update" + self.rulerArray[index].constructor.name] = function (user, ruler) {
             if (ruler == null)
                 return value.apply(this, arguments);
-
             self.otherPlayerWaypoints.set(user.id, new detailedWaypointData(
               //Remove duplicates in waypoints so that they can be compared to segments in terrain-calculation
               ruler.waypoints.reduce((acc, current) => {
@@ -160,9 +159,9 @@ export class PlayerData {
               !this.sameDestination(this.lastDestination, value.destination));
             if (res.length === 1) {
                 this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                this.currentDifficultyMultiplier = [1]
                 this.lastDestination = res[0].destination;
             }
-
         }
         canvas.app.stage.removeListener('click', handleLeftClick);
         canvas.app.stage.addListener('click', handleLeftClick);
@@ -183,6 +182,7 @@ export class PlayerData {
                 if (this.sameDestination(this.lastDestination, res[0].destination))
                     return;
                 this.difficultWaypoints.push(this.currentDifficultyMultiplier);
+                this.currentDifficultyMultiplier = [1]
                 this.lastDestination = res[0].destination;
                 return;
             }
@@ -206,6 +206,7 @@ export class PlayerData {
                 if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
                     return;
                 self.lastRegisteredMouseWheel = Date.now();
+
                 if (e.deltaY < 0) {
                     self.setTerrainMultiplier(self.gameSettings.increment);
                     self.updateRuler(e);
@@ -226,6 +227,7 @@ export class PlayerData {
         const self = this;
         oldRulerClear.forEach((value, index) => this.rulerArray[index].clear = function () {
             self.difficultWaypoints = [];
+            self.currentDifficultyMultiplier = [1];
             self.lastDestination = {};
             return value.apply(this, arguments);
         });
@@ -235,12 +237,12 @@ export class PlayerData {
     setTerrainMultiplier(amount) {
         if (!this.hotkeyIncrement)
             return;
-        if (this.currentDifficultyMultiplier === this.gameSettings.max && amount > 0)
-            this.currentDifficultyMultiplier = 1;
-        else if (this.currentDifficultyMultiplier === 1 && amount < 0)
-            this.currentDifficultyMultiplier = this.gameSettings.max;
-        else
-            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.gameSettings.max);
+        if (this.currentDifficultyMultiplier.length === 1 && this.currentDifficultyMultiplier[0] === this.gameSettings.max && amount > 0)
+            this.currentDifficultyMultiplier = [1];
+        else if (this.currentDifficultyMultiplier.length === 1 && this.currentDifficultyMultiplier[0] === 1 && amount < 0)
+            this.currentDifficultyMultiplier = [this.gameSettings.max];
+        else if(this.currentDifficultyMultiplier.length === 1)
+            this.currentDifficultyMultiplier = [Math.clamped(this.currentDifficultyMultiplier[0] + amount, 1, this.gameSettings.max)];
     }
 
 

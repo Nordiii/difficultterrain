@@ -1,8 +1,8 @@
 {
   "difficultterrain.maxTerrainMultiplier.n": "Maximal Terrain multiplier",
-  "difficultterrain.maxTerrainMultiplier.h": "Maximal amount which can get multiplied into the movement distance (only works with the fake rule this module creates)",
+  "difficultterrain.maxTerrainMultiplier.h": "Maximal amount which can get multiplied into the movement distance",
   "difficultterrain.terrainMultiplierSteps.n": "Amount to increment/decrease",
-  "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing x/y",
+  "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing the set hotkeys",
   "difficultterrain.incrementSpeed.n": "Time between registered hotkey push (client)",
   "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between applying increment/decrease difficult terrain value",
   "difficultterrain.mousewheelCycle.n": "Use mouse wheel + ctrl/shift to change terrain difficulty (client)",

@@ -7,17 +7,11 @@ This module is somewhat compatible with [Show-Drag-Distance](https://github.com/
 Future releases of Show-Drag-Distance may breaks this compatibility, just remove "DragRuler" in this case (difficult terrain module settings). 
 
 ## Terrain Layer Support
-Basic Terrain Layer support got added with 1.0.4! It is not perfect as you have to set waypoints before entering/exiting different terrain layers, else the first value will be calculated into the whole ruler!
+Basic Terrain Layer support got added with 1.0.4!
 
-A ruler path segment going over a terrain layer will enforce its multiplier on this segment, other parts can be adjusted with hotkeys
+As of 1.0.7 you don`t need to set waypoints anymore! The terrain layer markers will now be properly calculated into the path even when going over multiple different difficulties. 
 
-### Examples
-##### Correct:
-![Correct](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/correct.gif)
-##### Wrong:
-![Wrong](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/wrong.gif)
-##### Full correct path:
-![FullCorrectPath](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/fullcorrectpath.gif)
+A ruler path segment going over a terrain layer will enforce its multiplier on this specific segment, other parts can still be adjusted with hotkeys
 
 ## Settings
 ![Settings](https://raw.githubusercontent.com/Nordiii/difficultterrain/master/media/settings.JPG)
@@ -32,9 +26,13 @@ A ruler path segment going over a terrain layer will enforce its multiplier on t
 * [HexagonalGrid] Ruler sometimes ignores the terrain layer marker
 * [SquareGrid] Ruler sometimes ignores the terrain layer marker
 
-Both issues happen because the path does not get calculated the same way how the highlighted ruler path is calculated.
+Both issues happen because the path does not get calculated the same way how the highlighted ruler path gets calculated.
 
 ## Changelog
+#### 1.0.7
+* remove necessary waypoints for the ruler when using terrain layer
+* update lang files to reflect actual setting behavior
+
 #### 1.0.6 
 * improve Terrain Layer support for SquareGrid 
 
