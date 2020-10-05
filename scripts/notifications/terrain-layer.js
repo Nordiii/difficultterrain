@@ -1,7 +1,7 @@
 export function informTerrainLayerIntegration(ModuleID) {
     let extraText = ''
     if(game.user.isGM)
-        extraText ='<p>With the this update Difficult Terrain got <a href="https://github.com/wsaunders1014/TerrainLayer">Terrain Layer</a> compatibility!</p><h3>Information for the DM</h3><p>As DM you have to install the Terrain Layer module and enable the compatibility in the Difficult Terrain module settings, <strong>reload required</strong>!</p> <p>Your Players will only see the following guide as notification when enabling this feature</p>' +
+        extraText ='<p>With this update Difficult Terrain got <a href="https://github.com/wsaunders1014/TerrainLayer">Terrain Layer</a> compatibility!</p><h3>Information for the DM</h3><p>As DM you have to install the Terrain Layer module and enable the compatibility in the Difficult Terrain module settings, <strong>reload required</strong>!</p> <p>Your Players will only see the following guide as notification when enabling this feature</p>' +
           '<h4>Having Issues?</h4> <p>Creat an Issue on my <a href="https://github.com/Nordiii/difficultterrain/issues">Github</a> or tag me in the FoundryVTT Discord (Nordiii)! </p>'
     if ((game.user.isGM || game.settings.get(ModuleID, "useTerrainLayer")) && !game.settings.get(ModuleID, "dontShowAgainTerrainLayer")) {
         let dialog = new Dialog({

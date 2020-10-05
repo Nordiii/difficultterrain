@@ -3,7 +3,7 @@
   "title": "Difficult Terrain",
   "description": "Add a difficult terrain multiplier to your ruler!",
   "author": "Nordiii",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.6.6",
   "languages": [
@@ -14,7 +14,7 @@
     },
     {
       "lang": "de",
-      "name": "English",
+      "name": "German",
       "path": "lang/de.json"
     }
   ],
