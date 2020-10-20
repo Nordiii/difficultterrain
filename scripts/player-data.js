@@ -5,7 +5,7 @@ export class PlayerData {
     otherPlayerWaypoints = new Map();
     currentDifficultyMultiplier = 1;
     hotkeyIncrement = true;
-    gameSettings;
+    moduleSettings;
     lastRegisteredKeyPress = Date.now() - Date.now();
     lastRegisteredMouseWheel = Date.now() - Date.now();
     dragRulerFound = false;
@@ -14,14 +14,14 @@ export class PlayerData {
     rulerArray;
 
     constructor(ModuleSettings) {
-        this.gameSettings = ModuleSettings;
+        this.moduleSettings = ModuleSettings;
         this.updateRulerArray();
     }
 
     updateRulerArray() {
         this.rulerArray = [];
         this.rulerArray.push(canvas.controls.ruler);
-        this.gameSettings.extendedRuler.split(",").forEach(value => {
+        this.moduleSettings.extendedRuler.split(",").forEach(value => {
             let lowerCaseStart = value.charAt(0).toLowerCase() + value.slice(1);
             if (!(canvas.controls[value] == null))
                 this.rulerArray.push(canvas.controls[value])
@@ -43,18 +43,17 @@ export class PlayerData {
                 if (self.difficultWaypoints.length >= canvas.controls.dragRuler.waypoints.length && canvas.controls.dragRuler.waypoints.length > 0)
                     self.difficultWaypoints.pop();
             }
-            if (Date.now() - self.lastRegisteredKeyPress < self.gameSettings.interval)
+            if (Date.now() - self.lastRegisteredKeyPress < self.moduleSettings.interval)
                 return result;
             self.lastRegisteredKeyPress = Date.now();
 
-
-            if (e.key === self.gameSettings.incrementHotkey) {
-                self.setTerrainMultiplier(self.gameSettings.increment)
+            if (e.key === self.moduleSettings.incrementHotkey) {
+                self.setTerrainMultiplier(self.moduleSettings.increment)
                 self.updateRuler(e);
             }
 
-            if (e.key === self.gameSettings.decreaseHotkey) {
-                self.setTerrainMultiplier(-self.gameSettings.increment)
+            if (e.key === self.moduleSettings.decreaseHotkey) {
+                self.setTerrainMultiplier(-self.moduleSettings.increment)
                 self.updateRuler(e);
             }
 
@@ -79,8 +78,12 @@ export class PlayerData {
             let endGrid = canvas.grid.grid.getGridPositionFromPixels(end.x, end.y);
 
             let line = TerrainCalculation.calcStraightLine(startGrid, endGrid);
-            let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false);
-
+            let grid;
+            if (this.moduleSettings.addDifficulty)
+                grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).filter(value => value !== false).reduce((acc, val) => acc + val.multiple, 0);
+            else
+                grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false).map(val => val.multiple);
+            console.log(grid)
             if (grid == null) {
                 if (!this.hotkeyIncrement) {
                     this.currentDifficultyMultiplier = 1;
@@ -91,9 +94,9 @@ export class PlayerData {
             }
 
             this.hotkeyIncrement = false;
-            if (this.currentDifficultyMultiplier === grid.multiple)
+            if (this.currentDifficultyMultiplier === grid)
                 return;
-            this.currentDifficultyMultiplier = grid.multiple;
+            this.currentDifficultyMultiplier = grid;
             this.updateRuler(e)
 
 
@@ -203,14 +206,14 @@ export class PlayerData {
                 if (!self.rulerArray.some(value => value.waypoints.length > 0))
                     return oldClassReference.apply(this, arguments);
 
-                if (Date.now() - self.lastRegisteredMouseWheel < self.gameSettings.interval)
+                if (Date.now() - self.lastRegisteredMouseWheel < self.moduleSettings.interval)
                     return;
                 self.lastRegisteredMouseWheel = Date.now();
                 if (e.deltaY < 0) {
-                    self.setTerrainMultiplier(self.gameSettings.increment);
+                    self.setTerrainMultiplier(self.moduleSettings.increment);
                     self.updateRuler(e);
                 } else {
-                    self.setTerrainMultiplier(-self.gameSettings.increment);
+                    self.setTerrainMultiplier(-self.moduleSettings.increment);
                     self.updateRuler(e);
                 }
             }
@@ -235,12 +238,12 @@ export class PlayerData {
     setTerrainMultiplier(amount) {
         if (!this.hotkeyIncrement)
             return;
-        if (this.currentDifficultyMultiplier === this.gameSettings.max && amount > 0)
+        if (this.currentDifficultyMultiplier === this.moduleSettings.max && amount > 0)
             this.currentDifficultyMultiplier = 1;
         else if (this.currentDifficultyMultiplier === 1 && amount < 0)
-            this.currentDifficultyMultiplier = this.gameSettings.max;
+            this.currentDifficultyMultiplier = this.moduleSettings.max;
         else
-            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.gameSettings.max);
+            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.moduleSettings.max);
     }
 
 

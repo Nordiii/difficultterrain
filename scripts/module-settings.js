@@ -8,6 +8,7 @@ export class ModuleSettings {
     decreaseHotkey;
     extendedRuler;
     useTerrainLayer;
+    addDifficulty;
 
     constructor() {
         let getCurrentSettings = () => {
@@ -19,6 +20,7 @@ export class ModuleSettings {
             this.decreaseHotkey = game.settings.get(ModuleId, "decreaseHotkey");
             this.extendedRuler = game.settings.get(ModuleId, "extendedRuler");
             this.useTerrainLayer = game.settings.get(ModuleId, "useTerrainLayer");
+            this.addDifficulty = game.settings.get(ModuleId, "addDifficulty");
         }
         getCurrentSettings();
         Hooks.on("closeSettingsConfig", () => getCurrentSettings());
@@ -97,6 +99,14 @@ export class ModuleSettings {
         game.settings.register(ModuleId, "useTerrainLayer", {
             name: ModuleId+".useTerrainLayer.n",
             hint: ModuleId+".useTerrainLayer.h",
+            scope: "world",
+            config: true,
+            default: false,
+            type: Boolean
+        });
+        game.settings.register(ModuleId, "addDifficulty", {
+            name: ModuleId+".addDifficulty.n",
+            hint: ModuleId+".addDifficulty.h",
             scope: "world",
             config: true,
             default: false,

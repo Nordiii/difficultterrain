@@ -31,20 +31,33 @@ export class TerrainCalculation {
             let data = self.getCurrentTerrainData(segments);
             currentWaypoints = data[0];
             currentMultiplier = data[1];
-
             if (currentWaypoints == null) {
                 currentWaypoints = playerData.difficultWaypoints;
                 currentMultiplier = playerData.currentDifficultyMultiplier;
             }
             if (currentWaypoints == null || isNaN(currentMultiplier))
                 return res;
-            return res.map((s, i) => {
-                if (currentWaypoints.length > i)
-                    return s * currentWaypoints[i];
-                return s * currentMultiplier;
-
-            });
+            if(playerData.moduleSettings.addDifficulty)
+                return self.addDistance(res, currentWaypoints, currentMultiplier)
+            return self.multiplyDistance(res, currentWaypoints, currentMultiplier)
         };
+    }
+
+    multiplyDistance(res, currentWaypoints, currentMultiplier) {
+        return res.map((s, i) => {
+            if (currentWaypoints.length > i)
+                return s * currentWaypoints[i];
+            return s * currentMultiplier;
+
+        });
+    }
+
+    addDistance(res, currentWaypoints, currentMultiplier) {
+        return res.map((s, i) => {
+            if (currentWaypoints.length > i)
+                return s + currentWaypoints[i];
+            return s + currentMultiplier;
+        });
     }
 
     getCurrentTerrainData(segments) {
