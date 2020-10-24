@@ -2,6 +2,10 @@
 This module adds the functionality of difficult terrain to any ruler created!
 Customizable hotkeys to increase/decrease the multiplier.
 
+## Show Drag Distance
+It seems like Difficult Terrain and Show Drag Distance currently **don't work together** (not sure if it's the FoundryVTT or SDD update).
+I am thinking about better solutions to integrate modules which extend the ruler class.
+
 This module is somewhat compatible with [Show-Drag-Distance](https://github.com/wsaunders1014/ShowDragDistance) **version 2.1.4**, there are a few bugs, but I am not sure if those are on my end.
 
 Future releases of Show-Drag-Distance may breaks this compatibility, just remove "DragRuler" in this case (difficult terrain module settings). 
@@ -35,6 +39,11 @@ A ruler path segment going over a terrain layer will enforce its multiplier on t
 Both issues happen because the path does not get calculated the same way how the highlighted ruler path is calculated.
 
 ## Changelog
+
+#### 1.0.8
+* fix issue when not using Terrain Layer module
+* update compatibility for 0.7.5
+* add option to add the multiplier to difficulty instead of multiplying
 
 #### 1.0.7
 * update minor spelling mistakes and issues with lang support

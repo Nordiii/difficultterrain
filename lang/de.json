@@ -5,7 +5,7 @@
   "difficultterrain.terrainMultiplierSteps.h": "Wert um den der Multiplikator erhöht/verkleinert wird beim drücken der Hotkeys.",
   "difficultterrain.incrementSpeed.n": "Zeit zwischen registriertem drücken der Hotkeys (Lokal)",
   "difficultterrain.incrementSpeed.h": "Zeit (1 Sekunde = 1000) zwischen der erneuten Registrierung vom drücken der Hotkeys zur erhöhung/verringerung des Geländeschwierigkeit Multiplikators.",
-  "difficultterrain.mousewheelCycle.n": "Benutzen Sie das Mausrad + strg/shift, um den Schwierigkeitsgrad des Geländes zu ändern (Lokal)",
+  "difficultterrain.mousewheelCycle.n": "Benutzen Sie das Mausrad + strg + shift/alt, um den Schwierigkeitsgrad des Geländes zu ändern (Lokal)",
   "difficultterrain.mousewheelCycle.h": "Aktualisierung der Website erforderlich! Dadurch wird es möglich, mit dem Mausrad durch die Multiplikatoren zu wechseln. Dies deaktiviert jedoch den Zoom und die Token-Rotation, wenn Sie gerade ein Lineal zeichnen.",
   "difficultterrain.incrementHotkey.n": "Hotkey zum Erhöhen der Geländeschwierigkeit (Lokal)",
   "difficultterrain.incrementHotkey.h": "Sie können hier jeden beliebige Zeichen eingeben, keine kombination von Zeichen möglich.",
@@ -14,6 +14,7 @@
   "difficultterrain.extendedRuler.n": "Modulklassen die die Standardlinealklasse Erweitern (experimentell)",
   "difficultterrain.extendedRuler.h": "Für den Fall, dass ein Modul die Linealklasse erweitert (siehe Show Drag Distance), können Sie den Klassennamen hier durch ein ',' getrennt hinzufügen.\n Das könnte für Kompatibilität mit diesem Modul sorgen.",
   "difficultterrain.useTerrainLayer.n": "Aktiviere Terrain Layer support (alpha)",
-  "difficultterrain.useTerrainLayer.h": "Dadurch wird der Multiplikator eines Lineals automatisch gesetzt, wenn sich mindestens eine Gelände Markierung auf dem Pfad des Lineals befindet (Webseite muss neu geladen werden)."
-
+  "difficultterrain.useTerrainLayer.h": "Dadurch wird der Multiplikator eines Lineals automatisch gesetzt, wenn sich mindestens eine Gelände Markierung auf dem Pfad des Lineals befindet (Webseite muss neu geladen werden).",
+  "difficultterrain.addDifficulty.n": "Multiplikator addieren statt rein multiplizieren",
+  "difficultterrain.addDifficulty.h": "Addiere den Multiplikator auf die Distanz drauf, statt diesen rein zu multiplizieren (Webseite muss neu geladen werden)"
 }

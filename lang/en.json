@@ -5,7 +5,7 @@
   "difficultterrain.terrainMultiplierSteps.h": "Amount to increase/decrease the current multiplier when pressing the set hotkeys",
   "difficultterrain.incrementSpeed.n": "Time between registered hotkey push (client)",
   "difficultterrain.incrementSpeed.h": "Time (1 second = 1000) between applying increment/decrease difficult terrain value",
-  "difficultterrain.mousewheelCycle.n": "Use mouse wheel + ctrl/shift to change terrain difficulty (client)",
+  "difficultterrain.mousewheelCycle.n": "Use mouse wheel + ctrl + shift/alt to change terrain difficulty (client)",
   "difficultterrain.mousewheelCycle.h": "Website refresh needed! This will enable the ability to cycle through multipliers with the mouse wheel. This will however disable zoom and token rotation when you're currently drawing a ruler",
   "difficultterrain.incrementHotkey.n": "Hotkey to increment terrain difficulty (client)",
   "difficultterrain.incrementHotkey.h": "You can enter any key here, no combined keys possible",
@@ -14,5 +14,6 @@
   "difficultterrain.extendedRuler.n": "Module class extending the default ruler class (experimental)",
   "difficultterrain.extendedRuler.h": "In case a module extends the ruler class (see Show Drag Distance) you can add the class name here separated by a ',' this may add difficult terrain compatibility",
   "difficultterrain.useTerrainLayer.n": "Enable Terrain Layer support (alpha)",
-  "difficultterrain.useTerrainLayer.h": "This will automatically set the multiplier of a ruler waypoint when at least one terrain layer marker is on the rulers path (reload required)"
+  "difficultterrain.addDifficulty.n": "Add difficulty modifier instead of multiplying",
+  "difficultterrain.addDifficulty.h": "Add difficulty modifier to the distance instead of multiplying the distance by it (reload required)"
 }

@@ -1,6 +1,7 @@
 const ModuleId= "difficultterrain"
 export class ModuleSettings {
 
+    min;
     max;
     increment;
     interval;
@@ -21,6 +22,8 @@ export class ModuleSettings {
             this.extendedRuler = game.settings.get(ModuleId, "extendedRuler");
             this.useTerrainLayer = game.settings.get(ModuleId, "useTerrainLayer");
             this.addDifficulty = game.settings.get(ModuleId, "addDifficulty");
+            //Set min value to zero
+            this.min = this.addDifficulty ? 0 : 1;
         }
         getCurrentSettings();
         Hooks.on("closeSettingsConfig", () => getCurrentSettings());

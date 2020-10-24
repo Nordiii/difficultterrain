@@ -19,7 +19,7 @@ export function patch_ruler() {
       .registerReceiveBroadcast()
       .registerLeftClick()
       .registerRightClick()
-      .registerRulerClear()
+      .registerRulerClear();
 
     if (game.modules.get("TerrainLayer")?.active && moduleSettings.useTerrainLayer)
         playerData.registerMouseMoveEvent();
@@ -36,7 +36,6 @@ export function patch_ruler() {
         playerData
           .updateRulerArray()
           .registerLeftClick()
-          .registerMouseMoveEvent()
           .registerRulerClear();
 
         if (game.modules.get("TerrainLayer")?.active && moduleSettings.useTerrainLayer)

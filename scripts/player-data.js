@@ -3,7 +3,7 @@ import {TerrainCalculation} from "./terrain-calculation.js";
 export class PlayerData {
 
     otherPlayerWaypoints = new Map();
-    currentDifficultyMultiplier = 1;
+    currentDifficultyMultiplier;
     hotkeyIncrement = true;
     moduleSettings;
     lastRegisteredKeyPress = Date.now() - Date.now();
@@ -15,6 +15,7 @@ export class PlayerData {
 
     constructor(ModuleSettings) {
         this.moduleSettings = ModuleSettings;
+        this.currentDifficultyMultiplier = this.moduleSettings.min;
         this.updateRulerArray();
     }
 
@@ -78,31 +79,32 @@ export class PlayerData {
             let endGrid = canvas.grid.grid.getGridPositionFromPixels(end.x, end.y);
 
             let line = TerrainCalculation.calcStraightLine(startGrid, endGrid);
-            let grid;
-            if (this.moduleSettings.addDifficulty)
-                grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).filter(value => value !== false).reduce((acc, val) => acc + val.multiple, 0);
-            else
-                grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).find(value => value !== false).map(val => val.multiple);
-            console.log(grid)
-            if (grid == null) {
+            let grid = line.map(value => TerrainCalculation.checkForTerrain(value[0], value[1])).filter(value => value !== false);
+            if (grid == null || grid.length === 0) {
                 if (!this.hotkeyIncrement) {
-                    this.currentDifficultyMultiplier = 1;
+                    this.currentDifficultyMultiplier = this.moduleSettings.min;
                     this.hotkeyIncrement = true;
                     this.updateRuler(e)
                 }
                 return;
             }
 
+            let result;
+            if (this.moduleSettings.addDifficulty)
+                result = grid.reduce((acc, val) => acc + val.multiple, 0);
+            else
+                result = grid.slice(0,1).map(val => val.multiple);
+
             this.hotkeyIncrement = false;
-            if (this.currentDifficultyMultiplier === grid)
+            if (this.currentDifficultyMultiplier === result)
                 return;
-            this.currentDifficultyMultiplier = grid;
+            this.currentDifficultyMultiplier = result;
             this.updateRuler(e)
 
 
         };
         canvas.app.stage.removeListener("pointermove", handleMouseMove)
-        canvas.app.stage.addListener("pointermove", handleMouseMove, true)
+        canvas.app.stage.addListener("pointermove", handleMouseMove)
         return this;
     }
 
@@ -203,7 +205,7 @@ export class PlayerData {
         let self = this;
         const _onMouseWheel = function (oldClassReference) {
             return function (e) {
-                if (!self.rulerArray.some(value => value.waypoints.length > 0))
+                if ( (!e.shiftKey && !e.altKey) || !self.rulerArray.some(value => value.waypoints.length > 0))
                     return oldClassReference.apply(this, arguments);
 
                 if (Date.now() - self.lastRegisteredMouseWheel < self.moduleSettings.interval)
@@ -220,7 +222,8 @@ export class PlayerData {
         }
         const oldTokenRotate = canvas.activeLayer._onMouseWheel;
         canvas.activeLayer._onMouseWheel = _onMouseWheel(oldTokenRotate);
-
+        const oldCanvasZoom = canvas._onMouseWheel;
+        canvas._onMouseWheel = _onMouseWheel(oldCanvasZoom);
         return this;
     }
 
@@ -228,6 +231,7 @@ export class PlayerData {
         const oldRulerClear = this.rulerArray.map(value => value.clear);
         const self = this;
         oldRulerClear.forEach((value, index) => this.rulerArray[index].clear = function () {
+            self.currentDifficultyMultiplier = self.moduleSettings.min;
             self.difficultWaypoints = [];
             self.lastDestination = {};
             return value.apply(this, arguments);
@@ -239,13 +243,12 @@ export class PlayerData {
         if (!this.hotkeyIncrement)
             return;
         if (this.currentDifficultyMultiplier === this.moduleSettings.max && amount > 0)
-            this.currentDifficultyMultiplier = 1;
-        else if (this.currentDifficultyMultiplier === 1 && amount < 0)
+            this.currentDifficultyMultiplier = this.moduleSettings.min;
+        else if (this.currentDifficultyMultiplier === this.moduleSettings.min && amount < 0)
             this.currentDifficultyMultiplier = this.moduleSettings.max;
         else
-            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, 1, this.moduleSettings.max);
+            this.currentDifficultyMultiplier = Math.clamped(this.currentDifficultyMultiplier + amount, this.moduleSettings.min, this.moduleSettings.max);
     }
-
 
     updateRuler(e) {
         if (this.rulerArray.every(value => value.waypoints.length === 0))
