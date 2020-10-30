@@ -1,5 +1,10 @@
+let container = new PIXI.Container()
+let hexGraphics = new PIXI.Graphics();
+let lineGraphics = new PIXI.Graphics();
+
 export class TerrainCalculation {
     constructor(playerData) {
+        canvas.stage.addChild(container)
         this.playerData = playerData;
     }
 
@@ -88,6 +93,10 @@ export class TerrainCalculation {
     }
 
     static calcStraightLine(startCoordinates, endCoordinates) {
+        hexGraphics.destroy()
+        lineGraphics.destroy()
+        hexGraphics = new PIXI.Graphics()
+        lineGraphics = new PIXI.Graphics()
 
         // Translate coordinates
         let [x1, y1] = startCoordinates
@@ -135,6 +144,19 @@ export class TerrainCalculation {
             let position = canvas.grid.grid.getGridPositionFromPixels(X, Y)
 
             coordinatesArray.push(position);
+            let test= canvas.grid.grid.getPixelsFromGridPosition(position[0], position[1]);
+            let debugCord = canvas.grid.grid.getCenter(test[0],test[1])
+
+            hexGraphics.beginFill(0xe74c3c); // Red
+            hexGraphics.drawCircle(debugCord[0], debugCord[1], 2); // drawCircle(x, y, radius)
+            hexGraphics.endFill()
+
+            lineGraphics.beginFill(0x0000FF); // Red
+            lineGraphics.drawCircle(X, Y, 2); // drawCircle(x, y, radius)
+            lineGraphics.endFill()
+            // Applies fill to lines and shapes since the last call to beginFill.
+            container.addChild(hexGraphics)
+            container.addChild(lineGraphics)
         }
         return coordinatesArray;
     }
