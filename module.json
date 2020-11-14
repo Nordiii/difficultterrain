@@ -21,6 +21,11 @@
       "lang": "pt-BR",
       "name": "Português (Brasil)",
       "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "ko",
+      "name": "Korean",
+      "path": "lang/ko.json"
     }
   ],
   "esmodules": [
