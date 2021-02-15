@@ -1,0 +1,19 @@
+{
+  "difficultterrain.maxTerrainMultiplier.n": "최대 지형 승수",
+  "difficultterrain.maxTerrainMultiplier.h": "이동 거리에 곱할 수 있는 최대치",
+  "difficultterrain.terrainMultiplierSteps.n": "증감량",
+  "difficultterrain.terrainMultiplierSteps.h": "설정된 단축키를 누를 때 현재의 승수를 늘리거나 줄이는 양",
+  "difficultterrain.incrementSpeed.n": "등록된 단축키 입력간 시간 (클라이언트)",
+  "difficultterrain.incrementSpeed.h": "험지 값 증감 적용 간의 시간 (1초 = 1000)",
+  "difficultterrain.mousewheelCycle.n": "마우스 휠 + Ctrl + Shift/alt를 사용한 험지 변경 (클라이언트)",
+  "difficultterrain.mousewheelCycle.h": "웹 사이트 새로 고침 필요! 마우스 휠로 승수를 변경하는 기능이 활성화 되지만 자를 그릴 때 토큰의 회전 및 화면 확대/축소가 비활성화 된다.",
+  "difficultterrain.incrementHotkey.n": "험지의 정도를 높이기 위한 단축키 (클라이언트)",
+  "difficultterrain.incrementHotkey.h": "임의의 키를 입력한다. 키의 조합은 사용할 수 없다.",
+  "difficultterrain.decreaseHotkey.n": "험지의 정도를 줄이기 위한 단축키 (클라이언트)",
+  "difficultterrain.decreaseHotkey.h": "임의의 키를 입력한다. 키의 조합은 사용할 수 없다.",
+  "difficultterrain.extendedRuler.n": "기본 자 클래스를 연장하는 모듈 클래스 (experimental)",
+  "difficultterrain.extendedRuler.h": "모듈이 자의 클래스를 확장하는 경우 (Show Drag Distance 참조) 여기에 클래스 이름을 ','로 구분하여 추가할 수 있으며 이는 험지 호환성을 추가할 수 있다. ",
+  "difficultterrain.useTerrainLayer.n": "험지 레이어 지원 활성화 (alpha)",
+  "difficultterrain.addDifficulty.n": "승수 대신 험지 수정치 추가",
+  "difficultterrain.addDifficulty.h": "거리에 험지 승수를 추가하는 대신 수정치를 추가한다. (새로고침 필요)"
+}
