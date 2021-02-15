@@ -39,6 +39,8 @@ A ruler path segment going over a terrain layer will enforce its multiplier on t
 Both issues happen because the path does not get calculated the same way how the highlighted ruler path is calculated.
 
 ## Changelog
+#### 1.0.9
+* update languages, thanks @drdwing and @mcelemente
 
 #### 1.0.8
 * fix issue when not using Terrain Layer module
