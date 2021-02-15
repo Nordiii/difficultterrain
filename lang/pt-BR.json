@@ -5,15 +5,15 @@
   "difficultterrain.terrainMultiplierSteps.h": "Quantidade para aumentar/diminuir o multiplicador atual ao pressionar as teclas de atalho definidas",
   "difficultterrain.incrementSpeed.n": "Tempo entre o envio da tecla de atalho registrada (cliente)",
   "difficultterrain.incrementSpeed.h": "Tempo (1 segundo = 1000) entre a aplicação de incremento/diminuição do valor de terreno difícil",
-  "difficultterrain.mousewheelCycle.n": "Use a roda do mouse + ctrl + shift/alt para alterar a dificuldade do terreno (cliente)",
+  "difficultterrain.mousewheelCycle.n": "Usar a roda do mouse + ctrl + shift/alt para alterar a dificuldade do terreno (cliente)",
   "difficultterrain.mousewheelCycle.h": "É necessário atualizar o site! Isso permitirá a capacidade de percorrer os multiplicadores com a roda do mouse. No entanto, isto irá desativar o zoom e a rotação de token quando você estiver desenhando uma régua",
   "difficultterrain.incrementHotkey.n": "Atalho para aumentar a dificuldade do terreno (cliente)",
   "difficultterrain.incrementHotkey.h": "Você pode inserir qualquer tecla aqui, nenhuma tecla combinada é possível",
   "difficultterrain.decreaseHotkey.n": "Atalho para diminuir a dificuldade do terreno (cliente)",
   "difficultterrain.decreaseHotkey.h": "Você pode inserir qualquer tecla aqui, nenhuma tecla combinada é possível",
   "difficultterrain.extendedRuler.n": "Classe de módulo estendendo a classe de régua padrão (experimental)",
-  "difficultterrain.extendedRuler.h": "No caso de um módulo estender a classe da régua (veja Mostrar distância de arrasto), você pode adicionar o nome da classe aqui separado por um ',' isso pode adicionar compatibilidade de terreno difícil",
-  "difficultterrain.useTerrainLayer.n": "Ativar suporte para camada de terreno (alfa)",
-  "difficultterrain.addDifficulty.n": "Adicione um modificador de dificuldade em vez de multiplicar",
-  "difficultterrain.addDifficulty.h": "Adicione o modificador de dificuldade à distância em vez de multiplicar a distância por ele (recarregar necessário)"
+  "difficultterrain.extendedRuler.h": "No caso de um módulo estender a classe da régua (como o Show Drag Distance), você pode adicionar o nome da classe aqui separado por um ',' isso pode adicionar compatibilidade de terreno difícil",
+  "difficultterrain.useTerrainLayer.n": "Ativar suporte para Terrain Layer (alfa)",
+  "difficultterrain.addDifficulty.n": "Adicionar modificador de dificuldade em vez de multiplicar",
+  "difficultterrain.addDifficulty.h": "Adicionar modificador de dificuldade à distância em vez de multiplicar a distância por ele (recarregar necessário)"
 }
